@@ -132,7 +132,7 @@ const TeamDetails = () => {
 
             <header className="mb-8 border-b border-slate-700 pb-4">
                 <h1 className="text-3xl font-bold tracking-tight text-white">{team.name}</h1>
-                <p className="mt-2 text-slate-400">Led by: <span className="text-white font-medium">{team.owner.username}</span></p>
+                <p className="mt-2 text-slate-400">Led by: <span className="text-white font-medium">{team.owner.firstName} {team.owner.lastName}</span></p>
             </header>
 
             <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
@@ -143,10 +143,10 @@ const TeamDetails = () => {
                             <li key={member.id} className="py-3 flex items-center justify-between">
                                 <div className="flex items-center">
                                     <div className="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold mr-3">
-                                        {member.username?.charAt(0).toUpperCase()}
+                                        {member.firstName?.charAt(0).toUpperCase()}
                                     </div>
                                     <div>
-                                        <p className="text-sm font-medium text-white">{member.username}</p>
+                                        <p className="text-sm font-medium text-white">{member.firstName} {member.lastName}</p>
                                         <p className="text-xs text-slate-400">{member.email}</p>
                                     </div>
                                 </div>

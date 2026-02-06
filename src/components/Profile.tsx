@@ -24,24 +24,21 @@ const Profile = () => {
           <div className="border-t border-slate-700">
             <dl>
               <div className="bg-slate-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-slate-400">Username</dt>
-                <dd className="mt-1 text-sm text-white sm:mt-0 sm:col-span-2">{currentUser.username}</dd>
+                <dt className="text-sm font-medium text-slate-400">First Name</dt>
+                <dd className="mt-1 text-sm text-white sm:mt-0 sm:col-span-2">{currentUser.firstName}</dd>
               </div>
               <div className="bg-slate-900 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt className="text-sm font-medium text-slate-400">Last Name</dt>
+                <dd className="mt-1 text-sm text-white sm:mt-0 sm:col-span-2">{currentUser.lastName}</dd>
+              </div>
+              <div className="bg-slate-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                 <dt className="text-sm font-medium text-slate-400">Email</dt>
                 <dd className="mt-1 text-sm text-white sm:mt-0 sm:col-span-2">{currentUser.email}</dd>
               </div>
-              <div className="bg-slate-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+              <div className="bg-slate-900 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                 <dt className="text-sm font-medium text-slate-400">Roles</dt>
                 <dd className="mt-1 text-sm text-white sm:mt-0 sm:col-span-2">
                   {currentUser.roles && currentUser.roles.join(", ")}
-                </dd>
-              </div>
-              <div className="bg-slate-900 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-slate-400">Token</dt>
-                <dd className="mt-1 text-sm text-white sm:mt-0 sm:col-span-2 truncate">
-                  {currentUser.accessToken && currentUser.accessToken.substring(0, 20)}...{" "}
-                  {currentUser.accessToken && currentUser.accessToken.substr(currentUser.accessToken.length - 20)}
                 </dd>
               </div>
             </dl>

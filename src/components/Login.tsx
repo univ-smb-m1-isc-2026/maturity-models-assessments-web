@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import AuthService from "../services/auth.service";
 
 const Login = () => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -16,7 +16,7 @@ const Login = () => {
     setMessage("");
     setLoading(true);
 
-    AuthService.login(username, password).then(
+    AuthService.login(email, password).then(
       () => {
         navigate("/profile");
         window.location.reload();
@@ -46,18 +46,18 @@ const Login = () => {
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form className="space-y-6" onSubmit={handleLogin}>
           <div>
-            <label htmlFor="username" className="block text-sm font-medium leading-6 text-white">
-              Username
+            <label htmlFor="email" className="block text-sm font-medium leading-6 text-white">
+              Email
             </label>
             <div className="mt-2">
               <input
-                id="username"
-                name="username"
-                type="text"
+                id="email"
+                name="email"
+                type="email"
                 required
                 className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 px-3"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
           </div>

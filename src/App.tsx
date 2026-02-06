@@ -57,13 +57,13 @@ const App = () => {
             </div>
 
             <div className="flex items-center space-x-4">
-              {currentUser ? (
-                <>
-                  <Link to={"/profile"} className="text-slate-300 hover:text-white hover:bg-slate-800 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                    {currentUser.username}
-                  </Link>
-                  <a href="/login" className="bg-red-700 text-white hover:bg-red-600 px-4 py-2 rounded-md text-sm font-medium transition-colors shadow-sm" onClick={logOut}>
-                    LogOut
+                {currentUser ? (
+                  <>
+                    <Link to={"/profile"} className="text-slate-300 hover:text-white hover:bg-slate-800 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                      {currentUser.firstName} {currentUser.lastName}
+                    </Link>
+                    <a href="/login" className="bg-red-700 text-white hover:bg-red-600 px-4 py-2 rounded-md text-sm font-medium transition-colors shadow-sm" onClick={logOut}>
+                      LogOut
                   </a>
                 </>
               ) : (
