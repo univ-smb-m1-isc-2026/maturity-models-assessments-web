@@ -148,6 +148,12 @@ const MaturityModelsAdmin = () => {
                     </button>
                 </header>
 
+                {message && (
+                    <div className={`mb-4 p-4 rounded-md ${message.includes("success") ? "bg-green-900/50 text-green-400" : "bg-red-900/50 text-red-400"}`}>
+                        {message}
+                    </div>
+                )}
+
                 {loading ? (
                     <p className="text-slate-400">Loading models...</p>
                 ) : (

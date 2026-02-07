@@ -1,4 +1,4 @@
-import { useState, useEffect, FormEvent } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import AssessmentService from "../services/assessment.service";
 import { IAssessment, IAnswer } from "../types/assessment.type";
@@ -48,7 +48,7 @@ const AssessmentView = () => {
         setAnswers(newAnswers);
     };
 
-    const handleSave = (e: FormEvent) => {
+    const handleSave = (e: React.FormEvent) => {
         e.preventDefault();
         setMessage("");
         
@@ -68,6 +68,7 @@ const AssessmentView = () => {
     };
 
     if (loading) return <div className="text-white text-center mt-10">Loading assessment...</div>;
+    if (message && !assessment) return <div className="text-center mt-10 text-red-400">{message}</div>;
     if (!assessment) return <div className="text-white text-center mt-10">Assessment not found.</div>;
 
     return (
