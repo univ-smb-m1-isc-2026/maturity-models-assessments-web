@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 import AuthService from "./services/auth.service";
 import Login from "./components/Login";
@@ -13,15 +13,7 @@ import AssessmentView from "./components/AssessmentView";
 import { IUser } from "./types/user.type";
 
 const App = () => {
-  const [currentUser, setCurrentUser] = useState<IUser | undefined>(undefined);
-
-  useEffect(() => {
-    const user = AuthService.getCurrentUser();
-
-    if (user) {
-      setCurrentUser(user);
-    }
-  }, []);
+  const [currentUser, setCurrentUser] = useState<IUser | undefined>(AuthService.getCurrentUser());
 
   const logOut = () => {
     AuthService.logout();

@@ -1,4 +1,4 @@
-import { useState, useEffect, FormEvent } from "react";
+import { useState, useEffect, FormEvent, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import TeamService from "../services/team.service";
 import AssessmentService from "../services/assessment.service";
@@ -18,16 +18,7 @@ const TeamDetails = () => {
     const [assessmentMessage, setAssessmentMessage] = useState("");
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        if (id) {
-            loadTeam();
-            loadAssessments();
-            loadModels();
-        }
-    }, [id]);
-
-    const loadTeam = () => {
-        setLoading(true);
+    const loadTeam = useCallback(() => {
         TeamService.getUserTeams().then(
             (response) => {
                 const foundTeam = response.data.find((t: ITeam) => t.id === id);
@@ -39,9 +30,9 @@ const TeamDetails = () => {
                 setLoading(false);
             }
         );
-    };
+    }, [id]);
 
-    const loadAssessments = () => {
+    const loadAssessments = useCallback(() => {
         if (id) {
             AssessmentService.getTeamAssessments(id).then(
                 (response) => {
@@ -52,13 +43,13 @@ const TeamDetails = () => {
                 }
             );
         }
-    };
+    }, [id]);
 
-    const loadModels = () => {
+    const loadModels = useCallback(() => {
         MaturityModelService.getAllModels().then(
             (response) => {
                 setAvailableModels(response.data);
-                if (response.data.length > 0) {
+                if (response.data.length > 0 && response.data[0].id) {
                     setSelectedModelId(response.data[0].id);
                 }
             },
@@ -66,13 +57,22 @@ const TeamDetails = () => {
                 console.error("Error loading models", error);
             }
         );
-    };
+    }, []);
+
+    useEffect(() => {
+        if (id) {
+            loadTeam();
+            loadAssessments();
+            loadModels();
+        }
+    }, [id, loadTeam, loadAssessments, loadModels]);
 
     const handleInvite = (e: FormEvent) => {
         e.preventDefault();
         setMessage("");
 
         if (id && inviteEmail) {
+            setLoading(true);
             TeamService.inviteMember(id, inviteEmail).then(
                 (response) => {
                     setMessage(response.data.message);
@@ -87,6 +87,7 @@ const TeamDetails = () => {
                         error.message ||
                         error.toString();
                     setMessage(resMessage);
+                    setLoading(false);
                 }
             );
         }

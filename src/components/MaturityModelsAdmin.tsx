@@ -1,4 +1,4 @@
-import { useState, useEffect, FormEvent } from "react";
+import { useState, useEffect, FormEvent, useCallback } from "react";
 import MaturityModelService from "../services/maturity-model.service";
 import { IMaturityModel, IQuestion } from "../types/maturity-model.type";
 
@@ -13,12 +13,7 @@ const MaturityModelsAdmin = () => {
         questions: []
     });
 
-    useEffect(() => {
-        loadModels();
-    }, []);
-
-    const loadModels = () => {
-        setLoading(true);
+    const loadModels = useCallback(() => {
         MaturityModelService.getAllModels().then(
             (response) => {
                 setModels(response.data);
@@ -35,7 +30,11 @@ const MaturityModelsAdmin = () => {
                 setLoading(false);
             }
         );
-    };
+    }, []);
+
+    useEffect(() => {
+        loadModels();
+    }, [loadModels]);
 
     const handleCreateModel = () => {
         setCurrentModel({ name: "", questions: [] });
@@ -51,12 +50,14 @@ const MaturityModelsAdmin = () => {
 
     const handleDeleteModel = (id: string) => {
         if (window.confirm("Are you sure you want to delete this model?")) {
+            setLoading(true);
             MaturityModelService.deleteModel(id).then(
                 () => {
                     loadModels();
                 },
                 (error) => {
                     console.error(error);
+                    setLoading(false);
                 }
             );
         }
@@ -66,6 +67,7 @@ const MaturityModelsAdmin = () => {
         e.preventDefault();
         setMessage("");
 
+        setLoading(true);
         if (currentModel.id) {
             MaturityModelService.updateModel(currentModel.id, currentModel).then(
                 () => {
@@ -81,6 +83,7 @@ const MaturityModelsAdmin = () => {
                         error.message ||
                         error.toString();
                     setMessage(resMessage);
+                    setLoading(false);
                 }
             );
         } else {
@@ -98,6 +101,7 @@ const MaturityModelsAdmin = () => {
                         error.message ||
                         error.toString();
                     setMessage(resMessage);
+                    setLoading(false);
                 }
             );
         }

@@ -1,23 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import AuthService from "../services/auth.service";
 import { IUser } from "../types/user.type";
 
 const Profile = () => {
-  const [currentUser, setCurrentUser] = useState<IUser | undefined>(undefined);
+  const [currentUser, setCurrentUser] = useState<IUser | undefined>(AuthService.getCurrentUser());
   const [qrCodeUrl, setQrCodeUrl] = useState("");
   const [secret, setSecret] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
   const [message, setMessage] = useState("");
   const [is2FASetup, setIs2FASetup] = useState(false);
-
-  useEffect(() => {
-    const user = AuthService.getCurrentUser();
-
-    if (user) {
-      setCurrentUser(user);
-    }
-  }, []);
 
   const handleInitiate2FA = () => {
     AuthService.generate2FA().then((response) => {
@@ -29,6 +21,8 @@ const Profile = () => {
   };
 
   const handleVerify2FA = () => {
+    if (!currentUser) return;
+    
     AuthService.enable2FA(secret, verificationCode).then(
       () => {
         const updatedUser = { ...currentUser, using2FA: true };
@@ -44,6 +38,8 @@ const Profile = () => {
   };
 
   const handleDisable2FA = () => {
+    if (!currentUser) return;
+
     AuthService.disable2FA().then(() => {
       const updatedUser = { ...currentUser, using2FA: false };
       localStorage.setItem("user", JSON.stringify(updatedUser));

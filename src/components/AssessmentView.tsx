@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import AssessmentService from "../services/assessment.service";
 import { IAssessment, IAnswer } from "../types/assessment.type";
@@ -10,14 +10,7 @@ const AssessmentView = () => {
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState("");
 
-    useEffect(() => {
-        if (id) {
-            loadAssessment();
-        }
-    }, [id]);
-
-    const loadAssessment = () => {
-        setLoading(true);
+    const loadAssessment = useCallback(() => {
         AssessmentService.getAssessment(id!).then(
             (response) => {
                 const fetchedAssessment = response.data;
@@ -40,9 +33,15 @@ const AssessmentView = () => {
                 setLoading(false);
             }
         );
-    };
+    }, [id]);
 
-    const handleAnswerChange = (index: number, field: keyof IAnswer, value: any) => {
+    useEffect(() => {
+        if (id) {
+            loadAssessment();
+        }
+    }, [id, loadAssessment]);
+
+    const handleAnswerChange = (index: number, field: keyof IAnswer, value: string | number) => {
         const newAnswers = [...answers];
         newAnswers[index] = { ...newAnswers[index], [field]: value };
         setAnswers(newAnswers);

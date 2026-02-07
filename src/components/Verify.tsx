@@ -1,20 +1,14 @@
-import { useState, useEffect, FormEvent } from "react";
-import { useLocation, Link, useNavigate } from "react-router-dom";
+import { useState, FormEvent } from "react";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import AuthService from "../services/auth.service";
 
 const Verify = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(location.state?.email || "");
   const [code, setCode] = useState("");
   const [message, setMessage] = useState("");
   const [successful, setSuccessful] = useState(false);
-
-  useEffect(() => {
-    if (location.state && location.state.email) {
-      setEmail(location.state.email);
-    }
-  }, [location]);
 
   const handleVerify = (e: FormEvent) => {
     e.preventDefault();

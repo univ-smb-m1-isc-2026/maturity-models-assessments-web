@@ -1,4 +1,4 @@
-import { useState, useEffect, FormEvent } from "react";
+import { useState, useEffect, FormEvent, useCallback } from "react";
 import TeamService from "../services/team.service";
 import { Link } from "react-router-dom";
 import { ITeam } from "../types/team.type";
@@ -9,12 +9,7 @@ const TeamsDashboard = () => {
     const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        loadTeams();
-    }, []);
-
-    const loadTeams = () => {
-        setLoading(true);
+    const loadTeams = useCallback(() => {
         TeamService.getUserTeams().then(
             (response) => {
                 setTeams(response.data);
@@ -31,11 +26,16 @@ const TeamsDashboard = () => {
                 setLoading(false);
             }
         );
-    };
+    }, []);
+
+    useEffect(() => {
+        loadTeams();
+    }, [loadTeams]);
 
     const handleCreateTeam = (e: FormEvent) => {
         e.preventDefault();
         setMessage("");
+        setLoading(true);
 
         TeamService.createTeam(newTeamName).then(
             () => {
@@ -51,6 +51,7 @@ const TeamsDashboard = () => {
                     error.message ||
                     error.toString();
                 setMessage(resMessage);
+                setLoading(false);
             }
         );
     };
