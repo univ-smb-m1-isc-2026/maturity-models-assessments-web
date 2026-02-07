@@ -1,10 +1,13 @@
 import { useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import { Loader2 } from "lucide-react";
 import AuthService from "../services/auth.service";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [code, setCode] = useState("");
+  const [show2FAInput, setShow2FAInput] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -16,7 +19,7 @@ const Login = () => {
     setMessage("");
     setLoading(true);
 
-    AuthService.login(email, password).then(
+    AuthService.login(email, password, code).then(
       () => {
         navigate("/profile");
         window.location.reload();
@@ -30,7 +33,13 @@ const Login = () => {
           error.toString();
 
         setLoading(false);
-        setMessage(resMessage);
+        
+        if (error.response && error.response.status === 403 && resMessage === "2FA_REQUIRED") {
+             setShow2FAInput(true);
+             setMessage("Two-Factor Authentication required. Please enter your code.");
+        } else {
+             setMessage(resMessage);
+        }
       }
     );
   };
@@ -81,17 +90,33 @@ const Login = () => {
             </div>
           </div>
 
+          {show2FAInput && (
+            <div>
+              <label htmlFor="code" className="block text-sm font-medium leading-6 text-white">
+                2FA Code
+              </label>
+              <div className="mt-2">
+                <input
+                  id="code"
+                  name="code"
+                  type="text"
+                  required
+                  className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 px-3"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  placeholder="Enter 6-digit code"
+                />
+              </div>
+            </div>
+          )}
+
           <div>
             <button
               type="submit"
               disabled={loading}
               className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 disabled:opacity-50"
             >
-              {loading && (
-                <span className="mr-2 animate-spin">
-                   Loading...
-                </span>
-              )}
+              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Sign in
             </button>
           </div>

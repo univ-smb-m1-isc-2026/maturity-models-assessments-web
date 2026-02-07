@@ -5,5 +5,6 @@ export interface IUser {
   email?: string,
   password?: string,
   roles?: string[],
+  using2FA?: boolean,
   accessToken?: string
 }
