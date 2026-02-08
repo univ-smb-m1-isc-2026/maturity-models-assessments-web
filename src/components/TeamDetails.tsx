@@ -12,6 +12,9 @@ import { IUser } from "../types/user.type.ts";
 import AuthService from "../services/auth.service";
 import { IUser } from "../types/user.type";
 
+import AuthService from "../services/auth.service";
+import { IUser } from "../types/user.type";
+
 const TeamDetails = () => {
     const { id } = useParams();
     const [team, setTeam] = useState<ITeam | null>(null);
