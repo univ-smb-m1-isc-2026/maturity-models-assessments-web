@@ -1,14 +1,6 @@
 import axios from "axios";
-<<<<<<< Updated upstream
 import authHeader from "./auth-header.ts";
 import { IAssessment, IAnswer } from "../types/assessment.type.ts";
-=======
-import authHeader from "./auth-header";
-import { IAssessment, IAnswer } from "../types/assessment.type";
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
 const API_URL = "http://localhost:8080/api/assessments/";
 
