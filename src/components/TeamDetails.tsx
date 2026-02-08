@@ -9,6 +9,9 @@ import { IAssessment } from "../types/assessment.type.ts";
 import { IMaturityModel } from "../types/maturity-model.type.ts";
 import { IUser } from "../types/user.type.ts";
 
+import AuthService from "../services/auth.service";
+import { IUser } from "../types/user.type";
+
 const TeamDetails = () => {
     const { id } = useParams();
     const [team, setTeam] = useState<ITeam | null>(null);
