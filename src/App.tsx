@@ -87,14 +87,7 @@ function Home() {
 }
 
 function App() {
-  const [currentUser, setCurrentUser] = useState<IUser | undefined>(undefined);
-
-  useEffect(() => {
-    const user = AuthService.getCurrentUser();
-    if (user) {
-      setCurrentUser(user);
-    }
-  }, []);
+  const [currentUser, setCurrentUser] = useState<IUser | undefined>(() => AuthService.getCurrentUser());
 
   const logOut = () => {
     AuthService.logout();
@@ -106,7 +99,7 @@ function App() {
     <Router>
       <div className="min-h-screen bg-slate-950 text-slate-200 font-sans">
         <nav className="bg-slate-900 border-b border-slate-700 shadow-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
               <Link to={"/"} className="text-xl font-semibold text-slate-100 tracking-tight">
