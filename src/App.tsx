@@ -1,9 +1,13 @@
-
 import { useState, useEffect } from 'react'
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import axios from 'axios'
-import Header from './components/Header'
+import AuthService from './services/auth.service'
+import { IUser } from './types/user.type'
+import TeamDetails from './components/TeamDetails'
+import AssessmentView from './components/AssessmentView'
+import Register from './components/Register'
 
-function App() {
+function Home() {
   const [message, setMessage] = useState<string>('Chargement...')
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
 
@@ -21,9 +25,6 @@ function App() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 font-sans">
-      <Header />
-
       <main className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-extrabold text-white sm:text-5xl sm:tracking-tight lg:text-6xl">
@@ -51,7 +52,7 @@ function App() {
                 'bg-blue-900/30 border border-blue-800'
               }`}>
                 <div className="flex">
-                  <div className="flex-shrink-0">
+                    <div className="shrink-0">
                     {status === 'success' ? (
                       <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
@@ -89,7 +90,64 @@ function App() {
           </div>
         </div>
       </main>
-    </div>
+  )
+}
+
+function App() {
+  const [currentUser] = useState<IUser | undefined>(AuthService.getCurrentUser());
+
+  return (
+    <Router>
+      <div className="min-h-screen bg-slate-950 text-slate-200 font-sans">
+        <nav className="bg-slate-900 border-b border-slate-700 shadow-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16">
+            <div className="flex items-center">
+              <Link to={"/"} className="text-xl font-semibold text-slate-100 tracking-tight">
+                Maturity Assessment
+              </Link>
+              <div className="ml-10 flex items-baseline space-x-4">
+                <Link to={"/"} className="text-slate-300 hover:text-white hover:bg-slate-800 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                  Accueil
+                </Link>
+                {currentUser && (
+                  <>
+                    <Link to={"/teams"} className="text-slate-300 hover:text-white hover:bg-slate-800 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                      Teams
+                    </Link>
+                    {currentUser.roles?.includes("ROLE_PMO") && (
+                      <Link to={"/admin/models"} className="text-slate-300 hover:text-white hover:bg-slate-800 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                        Admin Models
+                      </Link>
+                    )}
+                  </>
+                )}
+                {!currentUser && (
+                   <Link to={"/register"} className="text-slate-300 hover:text-white hover:bg-slate-800 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                      Register
+                   </Link>
+                )}
+              </div>
+            </div>
+             <div className="flex items-center">
+                {currentUser ? (
+                    <div className="text-slate-300 text-sm">
+                        {currentUser.email}
+                    </div>
+                ) : null}
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/teams/:id" element={<TeamDetails />} />
+        <Route path="/assessments/:id" element={<AssessmentView />} />
+      </Routes>
+      </div>
+    </Router>
   )
 }
 
