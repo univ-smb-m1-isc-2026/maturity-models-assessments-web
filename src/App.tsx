@@ -67,25 +67,31 @@ function Home() {
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
                     )}
-                  </div>
-                  <div className="ml-3">
-                    <h3 className={`text-sm font-medium ${
-                      status === 'success' ? 'text-green-300' : 
-                      status === 'error' ? 'text-red-300' : 
-                      'text-blue-300'
-                    }`}>
-                      Réponse de l'API
-                    </h3>
-                    <div className={`mt-2 text-sm ${
-                      status === 'success' ? 'text-green-200' : 
-                      status === 'error' ? 'text-red-200' : 
-                      'text-blue-200'
-                    }`}>
-                      <p>{message}</p>
-                    </div>
-                  </div>
-                </div>
+                  </>
+                )}
               </div>
+            </div>
+
+            <div className="flex items-center space-x-4">
+                {currentUser ? (
+                  <>
+                    <Link to={"/profile"} className="text-slate-300 hover:text-white hover:bg-slate-800 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                      {currentUser.firstName} {currentUser.lastName}
+                    </Link>
+                    <a href="/login" className="bg-red-700 text-white hover:bg-red-600 px-4 py-2 rounded-md text-sm font-medium transition-colors shadow-sm" onClick={logOut}>
+                      LogOut
+                  </a>
+                </>
+              ) : (
+                <>
+                  <Link to={"/login"} className="text-slate-300 hover:text-white hover:bg-slate-800 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                    Login
+                  </Link>
+                  <Link to={"/register"} className="bg-blue-700 text-white hover:bg-blue-600 px-4 py-2 rounded-md text-sm font-medium transition-colors shadow-sm">
+                    Sign Up
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -151,4 +157,4 @@ function App() {
   )
 }
 
-export default App
+export default App;
