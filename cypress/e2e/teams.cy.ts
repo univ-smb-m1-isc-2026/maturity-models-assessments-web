@@ -96,7 +96,6 @@ describe('Teams Dashboard', () => {
     
     cy.contains('Development Team').should('be.visible');
     
-    // Check for team members in the list
     cy.contains('Test User').parents('li').within(() => {
       cy.contains('PMO').should('be.visible');
       cy.contains('Owner').should('be.visible');

@@ -109,15 +109,12 @@ describe('Assessment View', () => {
       }
     }).as('getAssessmentUpdated');
 
-    // Click submit
     cy.contains('Save Assessment').click();
     
     cy.wait('@submitAssessment');
     
-    // Verify radar chart appears (check for recharts container)
     cy.get('.recharts-responsive-container').should('be.visible');
     
-    // Verify Legend items
     cy.contains('Participant 1').should('be.visible');
     cy.contains('Participant 2').should('be.visible');
     cy.contains('Team Average').should('be.visible');

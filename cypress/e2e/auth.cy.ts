@@ -94,10 +94,8 @@ describe('Registration', () => {
   it('should lock role selection when token is present (Invitation)', () => {
     cy.visit('/register?token=invitation-token-123&role=user')
     
-    // Role selector should NOT be present or should be disabled/hidden
-    // Assuming implementation hides it or sets it to read-only
     cy.get('select[name="role"]').should('be.disabled')
-    cy.get('select[name="role"]').should('have.value', 'user') // Should default/lock to member
+    cy.get('select[name="role"]').should('have.value', 'user')
     
     cy.get('input[name="firstName"]').type('Invited')
     cy.get('input[name="lastName"]').type('User')
@@ -113,7 +111,6 @@ describe('Registration', () => {
     cy.get('button[type="submit"]').click()
     
     cy.wait('@inviteSignup').then((interception) => {
-        // Should send the token
         expect(interception.request.body).to.have.property('token', 'invitation-token-123')
     })
   })

@@ -20,8 +20,7 @@ const AssessmentView = () => {
                 setAssessment(fetchedAssessment);
                 
                 const questions = fetchedAssessment.maturityModel.questions;
-                
-                
+
                 const mySubmission = fetchedAssessment.submissions?.find(
                     (s: ISubmission) => s.userId === currentUser.id
                 );
@@ -121,7 +120,7 @@ const AssessmentView = () => {
                 </p>
             </header>
 
-            {}
+
             <div className="mb-12 bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
                 <h2 className="text-xl font-semibold text-white mb-4">Team Maturity Radar</h2>
                 <div className="h-96 w-full">

@@ -7,4 +7,5 @@ export interface IUser {
   lastName?: string;
   roles?: string[];
   accessToken?: string;
+  using2FA?: boolean;
 }

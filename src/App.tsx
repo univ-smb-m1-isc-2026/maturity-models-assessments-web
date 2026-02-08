@@ -67,31 +67,18 @@ function Home() {
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
                     )}
-                  </>
-                )}
+                  </div>
+                  <div className="ml-3 flex-1 md:flex md:justify-between">
+                    <p className={`text-sm ${
+                      status === 'success' ? 'text-green-300' : 
+                      status === 'error' ? 'text-red-300' : 
+                      'text-blue-300'
+                    }`}>
+                      {message}
+                    </p>
+                  </div>
+                </div>
               </div>
-            </div>
-
-            <div className="flex items-center space-x-4">
-                {currentUser ? (
-                  <>
-                    <Link to={"/profile"} className="text-slate-300 hover:text-white hover:bg-slate-800 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                      {currentUser.firstName} {currentUser.lastName}
-                    </Link>
-                    <a href="/login" className="bg-red-700 text-white hover:bg-red-600 px-4 py-2 rounded-md text-sm font-medium transition-colors shadow-sm" onClick={logOut}>
-                      LogOut
-                  </a>
-                </>
-              ) : (
-                <>
-                  <Link to={"/login"} className="text-slate-300 hover:text-white hover:bg-slate-800 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                    Login
-                  </Link>
-                  <Link to={"/register"} className="bg-blue-700 text-white hover:bg-blue-600 px-4 py-2 rounded-md text-sm font-medium transition-colors shadow-sm">
-                    Sign Up
-                  </Link>
-                </>
-              )}
             </div>
           </div>
         </div>
@@ -100,7 +87,20 @@ function Home() {
 }
 
 function App() {
-  const [currentUser] = useState<IUser | undefined>(AuthService.getCurrentUser());
+  const [currentUser, setCurrentUser] = useState<IUser | undefined>(undefined);
+
+  useEffect(() => {
+    const user = AuthService.getCurrentUser();
+    if (user) {
+      setCurrentUser(user);
+    }
+  }, []);
+
+  const logOut = () => {
+    AuthService.logout();
+    setCurrentUser(undefined);
+    window.location.href = "/login";
+  };
 
   return (
     <Router>
@@ -128,19 +128,28 @@ function App() {
                     )}
                   </>
                 )}
-                {!currentUser && (
-                   <Link to={"/register"} className="text-slate-300 hover:text-white hover:bg-slate-800 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                      Register
-                   </Link>
-                )}
               </div>
             </div>
-             <div className="flex items-center">
+             <div className="flex items-center space-x-4">
                 {currentUser ? (
-                    <div className="text-slate-300 text-sm">
-                        {currentUser.email}
-                    </div>
-                ) : null}
+                  <>
+                    <Link to={"/profile"} className="text-slate-300 hover:text-white hover:bg-slate-800 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                      {currentUser.firstName} {currentUser.lastName}
+                    </Link>
+                    <button onClick={logOut} className="bg-red-700 text-white hover:bg-red-600 px-4 py-2 rounded-md text-sm font-medium transition-colors shadow-sm">
+                      LogOut
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link to={"/login"} className="text-slate-300 hover:text-white hover:bg-slate-800 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                      Login
+                    </Link>
+                    <Link to={"/register"} className="bg-blue-700 text-white hover:bg-blue-600 px-4 py-2 rounded-md text-sm font-medium transition-colors shadow-sm">
+                      Sign Up
+                    </Link>
+                  </>
+                )}
             </div>
           </div>
         </div>
