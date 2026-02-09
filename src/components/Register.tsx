@@ -1,12 +1,13 @@
 import { useState, FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import AuthService from "../services/auth.service";
 
 const Register = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(searchParams.get("email") || "");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [successful, setSuccessful] = useState(false);
@@ -108,6 +109,8 @@ const Register = () => {
                   />
                 </div>
               </div>
+
+ 
 
               <div>
                 <label htmlFor="password" className="block text-sm font-medium leading-6 text-white">

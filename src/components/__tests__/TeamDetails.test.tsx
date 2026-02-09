@@ -5,11 +5,13 @@ import TeamDetails from '../TeamDetails';
 import TeamService from '../../services/team.service';
 import AssessmentService from '../../services/assessment.service';
 import MaturityModelService from '../../services/maturity-model.service';
+import AuthService from '../../services/auth.service';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 vi.mock('../../services/team.service');
 vi.mock('../../services/assessment.service');
 vi.mock('../../services/maturity-model.service');
+vi.mock('../../services/auth.service');
 
 describe('TeamDetails Component', () => {
   const mockTeam = {
@@ -27,18 +29,20 @@ describe('TeamDetails Component', () => {
   ];
 
   const mockModels = [
-      { id: 'm1', name: 'DevOps' },
-      { id: 'm2', name: 'Agile' }
+      { id: 'm1', name: 'DevOps', questions: [] },
+      { id: 'm2', name: 'Agile', questions: [] }
   ];
 
   beforeEach(() => {
     vi.resetAllMocks();
+    (AuthService.getCurrentUser as any).mockReturnValue({ id: 'user1', email: 'owner@test.com' });
   });
 
   it('renders team details', async () => {
     (TeamService.getUserTeams as any).mockResolvedValue({ data: [mockTeam] });
     (AssessmentService.getTeamAssessments as any).mockResolvedValue({ data: mockAssessments });
     (MaturityModelService.getAllModels as any).mockResolvedValue({ data: mockModels });
+    (MaturityModelService.getModelsByTeam as any).mockResolvedValue({ data: mockModels });
 
     render(
       <MemoryRouter initialEntries={['/teams/1']}>
@@ -61,6 +65,7 @@ describe('TeamDetails Component', () => {
     (TeamService.getUserTeams as any).mockResolvedValue({ data: [mockTeam] });
     (AssessmentService.getTeamAssessments as any).mockResolvedValue({ data: [] });
     (MaturityModelService.getAllModels as any).mockResolvedValue({ data: [] });
+    (MaturityModelService.getModelsByTeam as any).mockResolvedValue({ data: [] });
     (TeamService.inviteMember as any).mockResolvedValue({ data: { message: 'Invitation sent' } });
 
     render(
@@ -79,6 +84,43 @@ describe('TeamDetails Component', () => {
     await waitFor(() => {
         expect(TeamService.inviteMember).toHaveBeenCalledWith('1', 'new@test.com');
         expect(screen.getByText('Invitation sent')).toBeInTheDocument();
+    });
+  });
+
+  it('handles role updates', async () => {
+    const user = userEvent.setup();
+    (TeamService.getUserTeams as any).mockResolvedValue({ data: [mockTeam] });
+    (AssessmentService.getTeamAssessments as any).mockResolvedValue({ data: [] });
+    (MaturityModelService.getAllModels as any).mockResolvedValue({ data: [] });
+    (MaturityModelService.getModelsByTeam as any).mockResolvedValue({ data: [] });
+    (TeamService.updateMemberRoles as any).mockResolvedValue({ data: { message: 'Roles updated' } });
+
+    render(
+      <MemoryRouter initialEntries={['/teams/1']}>
+        <Routes>
+            <Route path="/teams/:id" element={<TeamDetails />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    await waitFor(() => expect(screen.getByText('Team Alpha')).toBeInTheDocument());
+
+    const editButtons = screen.getAllByText('Edit Roles');
+    await user.click(editButtons[0]);
+    
+    const memberItem = screen.getByText('Member One').closest('li');
+    expect(memberItem).toBeInTheDocument();
+    
+    await user.click(editButtons[1]); 
+
+    const pmoCheckbox = screen.getByLabelText('PMO');
+    await user.click(pmoCheckbox);
+
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+
+    await waitFor(() => {
+        expect(TeamService.updateMemberRoles).toHaveBeenCalledWith('1', 'user2', ['pmo']);
+        expect(screen.getByText('Roles updated')).toBeInTheDocument();
     });
   });
 });

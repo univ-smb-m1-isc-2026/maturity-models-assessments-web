@@ -1,6 +1,6 @@
 import axios from "axios";
-import authHeader from "./auth-header";
-import { IAssessment } from "../types/assessment.type";
+import authHeader from "./auth-header.ts";
+import { IAssessment, IAnswer } from "../types/assessment.type.ts";
 
 const API_URL = "http://localhost:8080/api/assessments/";
 
@@ -23,8 +23,8 @@ class AssessmentService {
     return axios.get<IAssessment>(API_URL + id, { headers: authHeader() });
   }
 
-  updateAssessment(id: string, assessment: IAssessment) {
-    return axios.put<IAssessment>(API_URL + id, assessment, {
+  submitAssessment(id: string, answers: IAnswer[]) {
+    return axios.put<IAssessment>(API_URL + id + "/submit", answers, {
       headers: authHeader(),
     });
   }

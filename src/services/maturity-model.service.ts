@@ -1,11 +1,15 @@
 import axios from "axios";
-import authHeader from "./auth-header";
-import { IMaturityModel } from "../types/maturity-model.type";
+import authHeader from "./auth-header.ts";
+import { IMaturityModel } from "../types/maturity-model.type.ts";
 
 const API_URL = "http://localhost:8080/api/models";
 
 const getAllModels = () => {
   return axios.get<IMaturityModel[]>(API_URL, { headers: authHeader() });
+};
+
+const getModelsByTeam = (teamId: string) => {
+  return axios.get<IMaturityModel[]>(API_URL + `/team/${teamId}`, { headers: authHeader() });
 };
 
 const getModelById = (id: string) => {
@@ -26,6 +30,7 @@ const deleteModel = (id: string) => {
 
 const MaturityModelService = {
   getAllModels,
+  getModelsByTeam,
   getModelById,
   createModel,
   updateModel,

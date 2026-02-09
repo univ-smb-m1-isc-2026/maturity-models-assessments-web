@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
+import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import AssessmentService from "../services/assessment.service";
-import { IAssessment, IAnswer } from "../types/assessment.type";
+import AuthService from "../services/auth.service";
+import { IAssessment, IAnswer, ISubmission } from "../types/assessment.type";
 
 const AssessmentView = () => {
     const { id } = useParams();
@@ -9,6 +11,7 @@ const AssessmentView = () => {
     const [answers, setAnswers] = useState<IAnswer[]>([]);
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState("");
+    const currentUser = AuthService.getCurrentUser();
 
     const loadAssessment = useCallback(() => {
         AssessmentService.getAssessment(id!).then(
@@ -17,7 +20,12 @@ const AssessmentView = () => {
                 setAssessment(fetchedAssessment);
                 
                 const questions = fetchedAssessment.maturityModel.questions;
-                const existingAnswers = fetchedAssessment.answers || [];
+
+                const mySubmission = fetchedAssessment.submissions?.find(
+                    (s: ISubmission) => s.userId === currentUser.id
+                );
+                
+                const existingAnswers = mySubmission?.answers || [];
                 
                 const initializedAnswers = questions.map(q => {
                     const found = existingAnswers.find(a => a.questionText === q.text);
@@ -33,7 +41,7 @@ const AssessmentView = () => {
                 setLoading(false);
             }
         );
-    }, [id]);
+    }, [id, currentUser.id]);
 
     useEffect(() => {
         if (id) {
@@ -52,11 +60,10 @@ const AssessmentView = () => {
         setMessage("");
         
         if (assessment && id) {
-            const updatedAssessment = { ...assessment, answers: answers };
-            AssessmentService.updateAssessment(id, updatedAssessment).then(
-                (response) => {
-                    setMessage("Assessment saved successfully!");
-                    setAssessment(response.data);
+            AssessmentService.submitAssessment(id, answers).then(
+                () => {
+                    setMessage("Assessment submitted successfully!");
+                    loadAssessment();
                 },
                 (error) => {
                     console.error("Error saving assessment", error);
@@ -65,6 +72,29 @@ const AssessmentView = () => {
             );
         }
     };
+
+    const chartData = assessment?.maturityModel.questions.map(q => {
+        const submissions = assessment.submissions || [];
+        const dataPoint: Record<string, string | number> = { subject: q.text, fullMark: 5 };
+        
+        let totalScore = 0;
+        let count = 0;
+        
+        submissions.forEach(sub => {
+            const ans = sub.answers.find(a => a.questionText === q.text);
+            if (ans) {
+                totalScore += ans.selectedLevel;
+                count++;
+                dataPoint[sub.userId] = ans.selectedLevel;
+            }
+        });
+        
+        const avg = count > 0 ? totalScore / count : 0;
+        dataPoint["Average"] = parseFloat(avg.toFixed(1));
+        return dataPoint;
+    }) || [];
+
+    const colors = ["#ef4444", "#f97316", "#f59e0b", "#84cc16", "#10b981", "#06b6d4", "#3b82f6", "#8b5cf6", "#d946ef", "#f43f5e"];
 
     if (loading) return <div className="text-white text-center mt-10">Loading assessment...</div>;
     if (message && !assessment) return <div className="text-center mt-10 text-red-400">{message}</div>;
@@ -89,6 +119,36 @@ const AssessmentView = () => {
                     Date: {new Date(assessment.date).toLocaleDateString()}
                 </p>
             </header>
+
+
+            <div className="mb-12 bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
+                <h2 className="text-xl font-semibold text-white mb-4">Team Maturity Radar</h2>
+                <div className="h-96 w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <RadarChart cx="50%" cy="50%" outerRadius="80%" data={chartData}>
+                            <PolarGrid stroke="#475569" />
+                            <PolarAngleAxis dataKey="subject" tick={{ fill: '#e2e8f0', fontSize: 12 }} />
+                            <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fill: '#94a3b8' }} />
+                            {assessment.submissions?.map((sub, idx) => (
+                                <Radar
+                                    key={sub.userId}
+                                    name={`Participant ${idx + 1}`}
+                                    dataKey={sub.userId}
+                                    stroke={colors[idx % colors.length]}
+                                    fill={colors[idx % colors.length]}
+                                    fillOpacity={0.1}
+                                />
+                            ))}
+                            <Radar name="Team Average" dataKey="Average" stroke="#ffffff" fill="#ffffff" fillOpacity={0.0} strokeWidth={3} />
+                            <Tooltip 
+                                contentStyle={{ backgroundColor: '#1e293b', borderColor: '#334155', color: '#f8fafc' }}
+                                itemStyle={{ color: '#818cf8' }}
+                            />
+                            <Legend />
+                        </RadarChart>
+                    </ResponsiveContainer>
+                </div>
+            </div>
 
             <form onSubmit={handleSave} className="space-y-8">
                 {assessment.maturityModel.questions.map((question, index) => (

@@ -7,10 +7,16 @@ export interface IAnswer {
   comment: string;
 }
 
+export interface ISubmission {
+  userId: string;
+  answers: IAnswer[];
+  date: string;
+}
+
 export interface IAssessment {
   id: string;
   team: ITeam;
   maturityModel: IMaturityModel;
   date: string;
-  answers: IAnswer[];
+  submissions: ISubmission[];
 }

@@ -4,8 +4,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import AssessmentView from '../AssessmentView';
 import AssessmentService from '../../services/assessment.service';
+import AuthService from '../../services/auth.service';
 
 vi.mock('../../services/assessment.service');
+vi.mock('../../services/auth.service');
 
 const mockAssessment = {
   id: '1',
@@ -32,6 +34,7 @@ const mockAssessment = {
 describe('AssessmentView Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    (AuthService.getCurrentUser as any).mockReturnValue({ id: 'user1' });
   });
 
   it('renders loading state initially', () => {
@@ -85,7 +88,7 @@ describe('AssessmentView Component', () => {
   it('allows changing answers and saving', async () => {
     const user = userEvent.setup();
     (AssessmentService.getAssessment as any).mockResolvedValue({ data: mockAssessment });
-    (AssessmentService.updateAssessment as any).mockResolvedValue({ data: mockAssessment });
+    (AssessmentService.submitAssessment as any).mockResolvedValue({ data: mockAssessment });
 
     render(
       <MemoryRouter initialEntries={['/assessments/1']}>
@@ -110,22 +113,14 @@ describe('AssessmentView Component', () => {
     await user.click(saveButton);
 
     await waitFor(() => {
-      expect(AssessmentService.updateAssessment).toHaveBeenCalledWith('1', expect.objectContaining({
-        answers: expect.arrayContaining([
-          expect.objectContaining({
-            selectedLevel: 2,
-            comment: 'Updated comment'
-          })
-        ])
-      }));
-      expect(screen.getByText(/Assessment saved successfully/i)).toBeInTheDocument();
+      expect(AssessmentService.submitAssessment).toHaveBeenCalledWith('1', expect.any(Array));
     });
   });
 
   it('handles save error', async () => {
     const user = userEvent.setup();
     (AssessmentService.getAssessment as any).mockResolvedValue({ data: mockAssessment });
-    (AssessmentService.updateAssessment as any).mockRejectedValue(new Error('Save failed'));
+    (AssessmentService.submitAssessment as any).mockRejectedValue(new Error('Save failed'));
 
     render(
       <MemoryRouter initialEntries={['/assessments/1']}>

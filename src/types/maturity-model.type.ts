@@ -11,5 +11,6 @@ export interface IQuestion {
 export interface IMaturityModel {
   id?: string;
   name: string;
+  teamId?: string;
   questions: IQuestion[];
 }
