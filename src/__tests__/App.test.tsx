@@ -54,7 +54,7 @@ describe('App Component', () => {
     expect(screen.getByText('LogOut')).toBeInTheDocument();
     expect(screen.queryByText('Login')).not.toBeInTheDocument();
     expect(screen.queryByText('Sign Up')).not.toBeInTheDocument();
-    expect(screen.queryByText('Maturity Models')).not.toBeInTheDocument();
+    expect(screen.queryByText('Admin Models')).not.toBeInTheDocument();
   });
 
   it('renders admin link for PMO user', () => {
@@ -67,7 +67,7 @@ describe('App Component', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('Maturity Models')).toBeInTheDocument();
+    expect(screen.getByText('Admin Models')).toBeInTheDocument();
   });
 
   it('handles logout', async () => {

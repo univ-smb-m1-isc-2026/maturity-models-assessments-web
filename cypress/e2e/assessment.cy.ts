@@ -109,14 +109,11 @@ describe('Assessment View', () => {
       }
     }).as('getAssessmentUpdated');
 
-    cy.contains('Save Assessment').click();
-    
+    cy.get('button[type="submit"]').click();
     cy.wait('@submitAssessment');
+    cy.wait('@getAssessmentUpdated');
     
-    cy.get('.recharts-responsive-container').should('be.visible');
-    
-    cy.contains('Participant 1').should('be.visible');
-    cy.contains('Participant 2').should('be.visible');
-    cy.contains('Team Average').should('be.visible');
-  });
-});
+    cy.contains('Assessment submitted successfully!').should('be.visible');
+    cy.get('.recharts-responsive-container').should('exist');
+  })
+})

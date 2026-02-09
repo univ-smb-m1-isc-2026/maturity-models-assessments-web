@@ -10,10 +10,6 @@ const Register = () => {
   const [email, setEmail] = useState(searchParams.get("email") || "");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [role, setRole] = useState(searchParams.get("role") || "user");
-  const [isRoleLocked] = useState(!!searchParams.get("role"));
-  const [teamId] = useState<string | null>(searchParams.get("teamId"));
-  const [token] = useState<string | null>(searchParams.get("token"));
   const [successful, setSuccessful] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -29,7 +25,7 @@ const Register = () => {
       return;
     }
 
-    AuthService.register(firstName, lastName, email, password, [role], token || teamId || undefined).then(
+    AuthService.register(firstName, lastName, email, password).then(
       (response) => {
         setMessage(response.data.message);
         setSuccessful(true);
@@ -114,30 +110,7 @@ const Register = () => {
                 </div>
               </div>
 
-              <div>
-                <label htmlFor="role" className="block text-sm font-medium leading-6 text-white">
-                  Profile Role
-                </label>
-                <div className="mt-2">
-                  <select
-                    id="role"
-                    name="role"
-                    className={`block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 px-3 [&>option]:bg-slate-800 ${isRoleLocked ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    value={role}
-                    onChange={(e) => setRole(e.target.value)}
-                    disabled={isRoleLocked}
-                  >
-                    <option value="user">Team Member</option>
-                    <option value="leader">Team Leader</option>
-                    <option value="pmo">PMO (Model Owner)</option>
-                  </select>
-                  {isRoleLocked && (
-                      <p className="mt-1 text-xs text-yellow-400">
-                          Role selection is locked by invitation link.
-                      </p>
-                  )}
-                </div>
-              </div>
+ 
 
               <div>
                 <label htmlFor="password" className="block text-sm font-medium leading-6 text-white">

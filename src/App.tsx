@@ -1,11 +1,16 @@
 import { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import { Routes, Route, Link } from 'react-router-dom'
 import axios from 'axios'
 import AuthService from './services/auth.service'
 import { IUser } from './types/user.type'
 import TeamDetails from './components/TeamDetails'
 import AssessmentView from './components/AssessmentView'
 import Register from './components/Register'
+import Login from './components/Login'
+import Profile from './components/Profile'
+import MaturityModelsAdmin from './components/MaturityModelsAdmin'
+import TeamsDashboard from './components/TeamsDashboard'
+import Verify from './components/Verify'
 
 function Home() {
   const [message, setMessage] = useState<string>('Chargement...')
@@ -96,7 +101,6 @@ function App() {
   };
 
   return (
-    <Router>
       <div className="min-h-screen bg-slate-950 text-slate-200 font-sans">
         <nav className="bg-slate-900 border-b border-slate-700 shadow-md">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -150,12 +154,16 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/admin/models" element={<MaturityModelsAdmin />} />
+        <Route path="/verify" element={<Verify />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/teams" element={<TeamsDashboard />} />
         <Route path="/teams/:id" element={<TeamDetails />} />
         <Route path="/assessments/:id" element={<AssessmentView />} />
       </Routes>
       </div>
-    </Router>
   )
 }
 

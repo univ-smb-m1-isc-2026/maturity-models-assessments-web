@@ -53,21 +53,16 @@ describe('Registration', () => {
     cy.visit('/register')
   })
 
-  it('should display registration form with role selection', () => {
+  it('should display registration form', () => {
     cy.get('input[name="firstName"]').should('be.visible')
     cy.get('input[name="lastName"]').should('be.visible')
     cy.get('input[name="email"]').should('be.visible')
     cy.get('input[name="password"]').should('be.visible')
     cy.get('input[name="confirmPassword"]').should('be.visible')
-    cy.get('select[name="role"]').should('be.visible')
-    
-    cy.get('select[name="role"] option').should('have.length', 3)
-    cy.get('select[name="role"]').select('pmo')
-    cy.get('select[name="role"]').select('leader')
-    cy.get('select[name="role"]').select('user')
+    cy.get('select[name="role"]').should('not.exist')
   })
 
-  it('should handle registration with role selection', () => {
+  it('should handle registration', () => {
     cy.intercept('POST', '**/api/auth/signup', {
       statusCode: 200,
       body: {
@@ -80,39 +75,27 @@ describe('Registration', () => {
     cy.get('input[name="email"]').type('john.doe@example.com')
     cy.get('input[name="password"]').type('password123')
     cy.get('input[name="confirmPassword"]').type('password123')
-    cy.get('select[name="role"]').select('pmo')
     
     cy.get('button[type="submit"]').click()
 
     cy.wait('@signupRequest').then((interception) => {
-        expect(interception.request.body).to.have.property('roles').that.includes('pmo')
+        expect(interception.request.body).to.not.have.property('roles')
     })
     
     cy.contains('User registered successfully!').should('be.visible')
   })
 
-  it('should lock role selection when token is present (Invitation)', () => {
-    cy.visit('/register?token=invitation-token-123&role=user')
+  it('should pre-fill email when provided in query params', () => {
+    cy.visit('/register?email=invited@example.com')
     
-    cy.get('select[name="role"]').should('be.disabled')
-    cy.get('select[name="role"]').should('have.value', 'user')
+    cy.get('input[name="email"]').should('have.value', 'invited@example.com')
     
     cy.get('input[name="firstName"]').type('Invited')
     cy.get('input[name="lastName"]').type('User')
-    cy.get('input[name="email"]').type('invited@example.com')
     cy.get('input[name="password"]').type('password123')
     cy.get('input[name="confirmPassword"]').type('password123')
     
-    cy.intercept('POST', '**/api/auth/signup', {
-        statusCode: 200,
-        body: { message: "User registered successfully!" }
-    }).as('inviteSignup')
-    
     cy.get('button[type="submit"]').click()
-    
-    cy.wait('@inviteSignup').then((interception) => {
-        expect(interception.request.body).to.have.property('token', 'invitation-token-123')
-    })
   })
 
   it('should validate password mismatch', () => {
