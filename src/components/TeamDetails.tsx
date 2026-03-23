@@ -232,8 +232,7 @@ const TeamDetails = () => {
             },
             (error) => {
                 const resMessage =
-                    (error.response && error.response.data && error.response.data.message) ||
-                    error.message || error.toString();
+                    error.response?.data?.message || error.message || error.toString();
                 setEditModelMessage(resMessage);
             }
         );
@@ -590,8 +589,9 @@ const TeamDetails = () => {
                                 )}
 
                                 <div className="mb-4">
-                                    <label className="block text-sm font-medium text-slate-300 mb-1">Model Name</label>
+                                    <label htmlFor="editModelName" className="block text-sm font-medium text-slate-300 mb-1">Model Name</label>
                                     <input
+                                        id="editModelName"
                                         type="text"
                                         value={editingModel.name}
                                         onChange={(e) => setEditingModel({ ...editingModel, name: e.target.value })}
@@ -602,7 +602,7 @@ const TeamDetails = () => {
 
                                 <div className="mb-3">
                                     <div className="flex justify-between items-center mb-2">
-                                        <label className="text-sm font-medium text-slate-300">Questions</label>
+                                        <span className="text-sm font-medium text-slate-300">Questions</span>
                                         <button
                                             type="button"
                                             onClick={addEditQuestion}
@@ -613,7 +613,7 @@ const TeamDetails = () => {
                                     </div>
                                     <ul className="space-y-3 max-h-80 overflow-y-auto">
                                         {editingModel.questions.map((q, qIdx) => (
-                                            <li key={qIdx} className="bg-slate-800 p-3 rounded border border-slate-700">
+                                            <li key={q.text || qIdx} className="bg-slate-800 p-3 rounded border border-slate-700">
                                                 <div className="flex justify-between items-center mb-2">
                                                     <input
                                                         type="text"
@@ -633,7 +633,7 @@ const TeamDetails = () => {
                                                 </div>
                                                 <div className="space-y-1 pl-2 border-l-2 border-slate-700">
                                                     {q.levels.map((level, lIdx) => (
-                                                        <div key={lIdx} className="flex items-center gap-2">
+                                                        <div key={level.value} className="flex items-center gap-2">
                                                             <span className="text-xs text-slate-500 w-4">{level.value}</span>
                                                             <input
                                                                 type="text"
