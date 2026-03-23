@@ -30,6 +30,9 @@ const TeamDetails = () => {
     const [newQuestions, setNewQuestions] = useState<Array<{text: string, levels: Array<{value: number, description: string}>}>>([]);
     const [currentQuestionText, setCurrentQuestionText] = useState("");
 
+    const [editingModel, setEditingModel] = useState<IMaturityModel | null>(null);
+    const [editModelMessage, setEditModelMessage] = useState("");
+
     const loadTeam = useCallback(() => {
         TeamService.getUserTeams().then(
             (response) => {
@@ -209,6 +212,60 @@ const TeamDetails = () => {
         const updatedQuestions = [...newQuestions];
         updatedQuestions[qIndex].levels[lIndex].description = description;
         setNewQuestions(updatedQuestions);
+    };
+
+    const handleEditModel = (model: IMaturityModel) => {
+        setEditingModel(JSON.parse(JSON.stringify(model))); // deep clone
+        setEditModelMessage("");
+        setIsCreatingModel(false);
+    };
+
+    const handleSaveEditModel = (e: FormEvent) => {
+        e.preventDefault();
+        if (!editingModel?.id) return;
+        setEditModelMessage("");
+        MaturityModelService.updateModel(editingModel.id, editingModel).then(
+            () => {
+                setEditModelMessage("Model updated successfully!");
+                setEditingModel(null);
+                loadModels();
+            },
+            (error) => {
+                const resMessage =
+                    error.response?.data?.message || error.message || error.toString();
+                setEditModelMessage(resMessage);
+            }
+        );
+    };
+
+    const handleEditQuestionChange = (index: number, text: string) => {
+        if (!editingModel) return;
+        const updated = [...editingModel.questions];
+        updated[index] = { ...updated[index], text };
+        setEditingModel({ ...editingModel, questions: updated });
+    };
+
+    const handleEditLevelChange = (qIndex: number, lIndex: number, description: string) => {
+        if (!editingModel) return;
+        const updated = [...editingModel.questions];
+        updated[qIndex].levels[lIndex] = { ...updated[qIndex].levels[lIndex], description };
+        setEditingModel({ ...editingModel, questions: updated });
+    };
+
+    const addEditQuestion = () => {
+        if (!editingModel) return;
+        const newQuestion = {
+            text: "",
+            levels: [1,2,3,4,5].map(v => ({ value: v, description: "" }))
+        };
+        setEditingModel({ ...editingModel, questions: [...editingModel.questions, newQuestion] });
+    };
+
+    const removeEditQuestion = (index: number) => {
+        if (!editingModel) return;
+        const updated = [...editingModel.questions];
+        updated.splice(index, 1);
+        setEditingModel({ ...editingModel, questions: updated });
     };
 
     const toggleRole = (role: string) => {
@@ -506,15 +563,114 @@ const TeamDetails = () => {
                             {availableModels.map(model => (
                                 <li key={model.id} className="py-3 flex justify-between items-center">
                                     <span className="text-white">{model.name}</span>
-                                    <span className="text-xs text-slate-400">
-                                        {model.questions.length} questions
-                                    </span>
+                                    <div className="flex items-center gap-4">
+                                        <span className="text-xs text-slate-400">
+                                            {model.questions.length} questions
+                                        </span>
+                                        <button
+                                            onClick={() => handleEditModel(model)}
+                                            className="text-xs text-indigo-400 hover:text-indigo-300 font-medium"
+                                        >
+                                            Edit
+                                        </button>
+                                    </div>
                                 </li>
                             ))}
                             {availableModels.length === 0 && (
                                 <li className="py-3 text-slate-400 text-sm">No models defined for this team.</li>
                             )}
                         </ul>
+
+                        {editingModel && (
+                            <form onSubmit={handleSaveEditModel} className="mt-6 p-4 bg-slate-900 rounded border border-indigo-700">
+                                <div className="flex justify-between items-center mb-4">
+                                    <h3 className="text-base font-semibold text-indigo-300">Editing: {editingModel.name}</h3>
+                                    <button
+                                        type="button"
+                                        onClick={() => setEditingModel(null)}
+                                        className="text-xs text-slate-400 hover:text-slate-200"
+                                    >
+                                        ✕ Cancel
+                                    </button>
+                                </div>
+
+                                {editModelMessage && (
+                                    <div className={`mb-3 p-2 rounded text-sm ${editModelMessage.includes("success") ? "bg-green-900/50 text-green-400" : "bg-red-900/50 text-red-400"}`}>
+                                        {editModelMessage}
+                                    </div>
+                                )}
+
+                                <div className="mb-4">
+                                    <label htmlFor="editModelName" className="block text-sm font-medium text-slate-300 mb-1">Model Name</label>
+                                    <input
+                                        id="editModelName"
+                                        type="text"
+                                        value={editingModel.name}
+                                        onChange={(e) => setEditingModel({ ...editingModel, name: e.target.value })}
+                                        className="w-full rounded-md border-0 bg-slate-800 py-1.5 text-white shadow-sm ring-1 ring-inset ring-slate-600 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm px-3"
+                                        required
+                                    />
+                                </div>
+
+                                <div className="mb-3">
+                                    <div className="flex justify-between items-center mb-2">
+                                        <span className="text-sm font-medium text-slate-300">Questions</span>
+                                        <button
+                                            type="button"
+                                            onClick={addEditQuestion}
+                                            className="text-xs px-2 py-1 bg-slate-700 text-white rounded hover:bg-slate-600"
+                                        >
+                                            + Add Question
+                                        </button>
+                                    </div>
+                                    <ul className="space-y-3 max-h-80 overflow-y-auto">
+                                        {editingModel.questions.map((q, qIdx) => (
+                                            <li key={q.text || qIdx} className="bg-slate-800 p-3 rounded border border-slate-700">
+                                                <div className="flex justify-between items-center mb-2">
+                                                    <input
+                                                        type="text"
+                                                        value={q.text}
+                                                        onChange={(e) => handleEditQuestionChange(qIdx, e.target.value)}
+                                                        className="flex-1 text-sm bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 mr-2"
+                                                        placeholder="Question text..."
+                                                        required
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => removeEditQuestion(qIdx)}
+                                                        className="text-red-400 hover:text-red-300 text-xs"
+                                                    >
+                                                        Remove
+                                                    </button>
+                                                </div>
+                                                <div className="space-y-1 pl-2 border-l-2 border-slate-700">
+                                                    {q.levels.map((level, lIdx) => (
+                                                        <div key={level.value} className="flex items-center gap-2">
+                                                            <span className="text-xs text-slate-500 w-4">{level.value}</span>
+                                                            <input
+                                                                type="text"
+                                                                value={level.description}
+                                                                onChange={(e) => handleEditLevelChange(qIdx, lIdx, e.target.value)}
+                                                                className="flex-1 text-xs bg-slate-900 border border-slate-700 rounded px-2 py-1 text-slate-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                                                                placeholder={`Level ${level.value} description`}
+                                                                required
+                                                            />
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    className="w-full rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
+                                >
+                                    Save Changes
+                                </button>
+                            </form>
+                        )}
                     </div>
                 )}
 
