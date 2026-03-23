@@ -227,6 +227,18 @@ const TeamDetails = () => {
         return <div className="text-white text-center mt-10">Team not found.</div>;
     }
 
+    const currentUserId = currentUser?.id;
+    const currentMember = team.members.find((m) => m.id === currentUserId);
+    const currentTeamRoles = currentMember?.roles ?? [];
+
+    const isOwner = currentUserId === team.owner.id;
+    const isPMO = currentTeamRoles.includes("ROLE_PMO");
+    const isTeamLeader = currentTeamRoles.includes("ROLE_TEAM_LEADER");
+    const canInviteMembers = isOwner || isPMO || isTeamLeader;
+    const canStartAssessments = isOwner || isPMO || isTeamLeader;
+    const canManageModels = isOwner || isPMO;
+    const canEditRoles = isOwner || isPMO;
+
     return (
         <div className="min-h-full py-10 px-4 sm:px-6 lg:px-8 text-white">
              <div className="mb-6">
@@ -303,7 +315,7 @@ const TeamDetails = () => {
                                 </div>
                             </div>
                             <div className="flex flex-col items-end gap-2">
-                                {(currentUser?.roles?.includes("ROLE_PMO") || currentUser?.id === team.owner.id) && (
+                                {canEditRoles && (
                                     <button 
                                         onClick={() => {
                                             setEditingMember(member.id || null);
@@ -331,7 +343,7 @@ const TeamDetails = () => {
                 </div>
 
                 <div className="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700 h-fit">
-                    {(currentUser?.roles?.includes("ROLE_TEAM_LEADER") || currentUser?.roles?.includes("ROLE_PMO") || currentUser?.id === team.owner.id) ? (
+                    {canInviteMembers ? (
                         <>
                             <h2 className="text-xl font-semibold mb-4 text-indigo-400">Invite Member</h2>
                             <form onSubmit={handleInvite} className="space-y-4">
@@ -362,7 +374,7 @@ const TeamDetails = () => {
                         </>
                     ) : (
                          <div className="text-slate-400 text-sm">
-                            Only team leaders can invite new members.
+                            Only the team owner, a team leader, or a PMO can invite new members.
                          </div>
                     )}
                 </div>
@@ -396,7 +408,7 @@ const TeamDetails = () => {
                 </div>
 
 
-                {(currentUser?.roles?.includes("ROLE_PMO") || currentUser?.id === team.owner.id) && (
+                {canManageModels && (
                     <div className="md:col-span-2 bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
                         <div className="flex justify-between items-center mb-4">
                             <h2 className="text-xl font-semibold text-indigo-400">Team Maturity Models</h2>
@@ -507,7 +519,7 @@ const TeamDetails = () => {
                 )}
 
                 <div className="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700 h-fit">
-                    {(currentUser?.roles?.includes("ROLE_TEAM_LEADER") || currentUser?.roles?.includes("ROLE_PMO") || currentUser?.id === team.owner.id) ? (
+                    {canStartAssessments ? (
                         <>
                             <h2 className="text-xl font-semibold mb-4 text-indigo-400">Start New Assessment</h2>
                             <form onSubmit={handleStartAssessment} className="space-y-4">
@@ -539,7 +551,7 @@ const TeamDetails = () => {
                         </>
                     ) : (
                          <div className="text-slate-400 text-sm">
-                            Only team leaders can start new assessments.
+                            Only the team owner, a team leader, or a PMO can start new assessments.
                          </div>
                     )}
                 </div>
