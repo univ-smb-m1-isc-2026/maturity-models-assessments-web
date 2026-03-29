@@ -2,7 +2,7 @@ import axios from "axios";
 import authHeader from "./auth-header.ts";
 import { IAssessment, IAnswer } from "../types/assessment.type.ts";
 
-const API_URL = "http://localhost:8080/api/assessments/";
+const API_URL = `${import.meta.env.VITE_API_URL}/api/assessments/`;
 
 class AssessmentService {
   startAssessment(teamId: string, maturityModelId: string) {
