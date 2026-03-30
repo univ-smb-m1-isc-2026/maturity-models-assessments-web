@@ -2,7 +2,8 @@ import axios from "axios";
 
 import authHeader from "./auth-header.ts";
 
-const API_URL = "http://localhost:8080/api/auth/";
+import { MMA_API_URL } from "../config";
+const API_URL = MMA_API_URL + "/api/auth/";
 
 const register = (firstName: string, lastName: string, email: string, password: string, teamId?: string) => {
   return axios.post(API_URL + "signup", {

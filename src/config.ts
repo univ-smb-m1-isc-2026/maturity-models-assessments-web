@@ -1,0 +1,1 @@
+export const MMA_API_URL = "https://mmaturity-api.oups.net";

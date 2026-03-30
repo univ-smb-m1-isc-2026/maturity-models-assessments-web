@@ -2,7 +2,8 @@ import axios from "axios";
 import authHeader from "./auth-header.ts";
 import { IAssessment, IAnswer } from "../types/assessment.type.ts";
 
-const API_URL = "http://localhost:8080/api/assessments/";
+import { MMA_API_URL } from "../config";
+const API_URL = MMA_API_URL + "/api/assessments/";
 
 class AssessmentService {
   startAssessment(teamId: string, maturityModelId: string) {
