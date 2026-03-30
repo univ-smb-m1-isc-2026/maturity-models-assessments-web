@@ -19,11 +19,31 @@ const updateMemberRoles = (teamId: string, userId: string, roles: string[]) => {
   return axios.put(API_URL + `/${teamId}/members/${userId}/roles`, { roles }, { headers: authHeader() });
 };
 
+const getInvitations = (teamId: string) => {
+  return axios.get(API_URL + `/${teamId}/invitations`, { headers: authHeader() });
+};
+
+const acceptInvitation = (token: string) => {
+  return axios.post(API_URL + `/invitations/${token}/accept`, {}, { headers: authHeader() });
+};
+
+const resendInvitation = (teamId: string, invitationId: string) => {
+  return axios.post(API_URL + `/${teamId}/invitations/${invitationId}/resend`, {}, { headers: authHeader() });
+};
+
+const revokeInvitation = (teamId: string, invitationId: string) => {
+  return axios.post(API_URL + `/${teamId}/invitations/${invitationId}/revoke`, {}, { headers: authHeader() });
+};
+
 const TeamService = {
   getUserTeams,
   createTeam,
   inviteMember,
   updateMemberRoles,
+  getInvitations,
+  acceptInvitation,
+  resendInvitation,
+  revokeInvitation,
 };
 
 export default TeamService;

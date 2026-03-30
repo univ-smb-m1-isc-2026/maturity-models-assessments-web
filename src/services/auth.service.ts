@@ -4,12 +4,13 @@ import authHeader from "./auth-header.ts";
 
 const API_URL = "http://localhost:8080/api/auth/";
 
-const register = (firstName: string, lastName: string, email: string, password: string) => {
+const register = (firstName: string, lastName: string, email: string, password: string, teamId?: string) => {
   return axios.post(API_URL + "signup", {
     firstName,
     lastName,
     email,
-    password
+    password,
+    teamId
   });
 };
 
@@ -46,6 +47,10 @@ const verify = (email: string, code: string) => {
   });
 };
 
+const resendVerification = (email: string) => {
+  return axios.post(API_URL + "verify/resend", null, { params: { email } });
+};
+
 const generate2FA = () => {
   return axios.post(API_URL + "2fa/generate", {}, { headers: authHeader() });
 };
@@ -64,6 +69,7 @@ const AuthService = {
   logout,
   getCurrentUser,
   verify,
+  resendVerification,
   generate2FA,
   enable2FA,
   disable2FA,

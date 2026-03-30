@@ -37,6 +37,8 @@ const Login = () => {
         if (error.response && error.response.status === 403 && resMessage === "2FA_REQUIRED") {
              setShow2FAInput(true);
              setMessage("Two-Factor Authentication required. Please enter your code.");
+        } else if (error.response && error.response.status === 403 && resMessage === "EMAIL_NOT_VERIFIED") {
+             navigate("/verify", { state: { email } });
         } else {
              setMessage(resMessage);
         }

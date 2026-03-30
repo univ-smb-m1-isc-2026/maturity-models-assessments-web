@@ -11,6 +11,8 @@ import Profile from './components/Profile'
 import MaturityModelsAdmin from './components/MaturityModelsAdmin'
 import TeamsDashboard from './components/TeamsDashboard'
 import Verify from './components/Verify'
+import TeamInvitations from './components/TeamInvitations'
+import InvitationAccept from './components/InvitationAccept'
 
 function Home() {
   const [message, setMessage] = useState<string>('Chargement...')
@@ -161,6 +163,8 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/teams" element={<TeamsDashboard />} />
         <Route path="/teams/:id" element={<TeamDetails />} />
+        <Route path="/teams/:id/invitations" element={<TeamInvitations />} />
+        <Route path="/invitations/accept" element={<InvitationAccept />} />
         <Route path="/assessments/:id" element={<AssessmentView />} />
       </Routes>
       </div>

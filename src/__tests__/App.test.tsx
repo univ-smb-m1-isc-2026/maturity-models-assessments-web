@@ -14,6 +14,8 @@ vi.mock('../components/Profile', () => ({ default: () => <div>Profile Component<
 vi.mock('../components/Verify', () => ({ default: () => <div>Verify Component</div> }));
 vi.mock('../components/TeamsDashboard', () => ({ default: () => <div>TeamsDashboard Component</div> }));
 vi.mock('../components/TeamDetails', () => ({ default: () => <div>TeamDetails Component</div> }));
+vi.mock('../components/TeamInvitations', () => ({ default: () => <div>TeamInvitations Component</div> }));
+vi.mock('../components/InvitationAccept', () => ({ default: () => <div>InvitationAccept Component</div> }));
 vi.mock('../components/MaturityModelsAdmin', () => ({ default: () => <div>MaturityModelsAdmin Component</div> }));
 vi.mock('../components/AssessmentView', () => ({ default: () => <div>AssessmentView Component</div> }));
 

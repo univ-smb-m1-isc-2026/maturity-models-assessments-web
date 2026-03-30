@@ -72,7 +72,7 @@ describe('Register Component', () => {
     await user.click(screen.getByRole('button', { name: /Sign up/i }));
 
     await waitFor(() => {
-      expect(AuthService.register).toHaveBeenCalledWith('John', 'Doe', 'john@example.com', 'password123');
+      expect(AuthService.register).toHaveBeenCalledWith('John', 'Doe', 'john@example.com', 'password123', undefined);
       expect(screen.getByText(/User registered successfully/i)).toBeInTheDocument();
     });
   });

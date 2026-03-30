@@ -9,11 +9,14 @@ const Verify = () => {
   const [code, setCode] = useState("");
   const [message, setMessage] = useState("");
   const [successful, setSuccessful] = useState(false);
+  const [messageType, setMessageType] = useState<"error" | "info">("error");
+  const [resending, setResending] = useState(false);
 
   const handleVerify = (e: FormEvent) => {
     e.preventDefault();
     setMessage("");
     setSuccessful(false);
+    setMessageType("error");
 
     AuthService.verify(email, code).then(
       (response) => {
@@ -33,6 +36,33 @@ const Verify = () => {
 
         setMessage(resMessage);
         setSuccessful(false);
+        setMessageType("error");
+      }
+    );
+  };
+  
+  const handleResend = () => {
+    if (!email) return;
+    setResending(true);
+    setMessage("");
+    setMessageType("info");
+
+    AuthService.resendVerification(email).then(
+      (response) => {
+        setMessage(response.data.message);
+        setResending(false);
+      },
+      (error) => {
+        const resMessage =
+          (error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+          error.message ||
+          error.toString();
+
+        setMessage(resMessage);
+        setMessageType("error");
+        setResending(false);
       }
     );
   };
@@ -96,8 +126,19 @@ const Verify = () => {
                 </button>
             </div>
 
+            <div>
+                <button
+                  type="button"
+                  onClick={handleResend}
+                  disabled={resending || !email}
+                  className="flex w-full justify-center rounded-md bg-white/10 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-white/15 disabled:opacity-50"
+                >
+                  {resending ? "Resending..." : "Resend code"}
+                </button>
+            </div>
+
             {message && (
-                <div className="rounded-md bg-red-900/50 p-4 text-red-400">
+                <div className={`rounded-md p-4 ${messageType === "error" ? "bg-red-900/50 text-red-400" : "bg-indigo-900/40 text-indigo-200"}`}>
                 <div className="flex">
                     <div className="ml-3">
                     <h3 className="text-sm font-medium">{message}</h3>

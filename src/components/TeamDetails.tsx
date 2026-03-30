@@ -428,6 +428,11 @@ const TeamDetails = () => {
                                     {message}
                                 </div>
                             )}
+                            <div className="mt-4">
+                                <Link to={`/teams/${id}/invitations`} className="text-xs text-indigo-400 hover:text-indigo-300">
+                                    View Invitations Log
+                                </Link>
+                            </div>
                         </>
                     ) : (
                          <div className="text-slate-400 text-sm">

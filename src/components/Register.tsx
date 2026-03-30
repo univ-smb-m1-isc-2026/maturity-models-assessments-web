@@ -8,6 +8,7 @@ const Register = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState(searchParams.get("email") || "");
+  const teamIdParam = searchParams.get("teamId") || "";
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [successful, setSuccessful] = useState(false);
@@ -25,7 +26,7 @@ const Register = () => {
       return;
     }
 
-    AuthService.register(firstName, lastName, email, password).then(
+    AuthService.register(firstName, lastName, email, password, teamIdParam || undefined).then(
       (response) => {
         setMessage(response.data.message);
         setSuccessful(true);
