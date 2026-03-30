@@ -2,7 +2,8 @@ import axios from "axios";
 import authHeader from "./auth-header.ts";
 import { IMaturityModel } from "../types/maturity-model.type.ts";
 
-const API_URL = "http://localhost:8080/api/models";
+import { MMA_API_URL } from "../config";
+const API_URL = MMA_API_URL + "/api/models/";
 
 const getAllModels = () => {
   return axios.get<IMaturityModel[]>(API_URL, { headers: authHeader() });
