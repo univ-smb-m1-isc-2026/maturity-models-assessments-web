@@ -2,31 +2,30 @@ import axios from "axios";
 import authHeader from "./auth-header.ts";
 import { IMaturityModel } from "../types/maturity-model.type.ts";
 
-import { MMA_API_URL } from "../config";
-const API_URL = MMA_API_URL + "/api/models/";
+import { apiUrl } from "../config";
 
 const getAllModels = () => {
-  return axios.get<IMaturityModel[]>(API_URL, { headers: authHeader() });
+  return axios.get<IMaturityModel[]>(apiUrl("/api/models"), { headers: authHeader() });
 };
 
 const getModelsByTeam = (teamId: string) => {
-  return axios.get<IMaturityModel[]>(API_URL + `/team/${teamId}`, { headers: authHeader() });
+  return axios.get<IMaturityModel[]>(apiUrl(`/api/models/team/${teamId}`), { headers: authHeader() });
 };
 
 const getModelById = (id: string) => {
-  return axios.get<IMaturityModel>(API_URL + `/${id}`, { headers: authHeader() });
+  return axios.get<IMaturityModel>(apiUrl(`/api/models/${id}`), { headers: authHeader() });
 };
 
 const createModel = (data: IMaturityModel) => {
-  return axios.post<IMaturityModel>(API_URL, data, { headers: authHeader() });
+  return axios.post<IMaturityModel>(apiUrl("/api/models"), data, { headers: authHeader() });
 };
 
 const updateModel = (id: string, data: IMaturityModel) => {
-  return axios.put<IMaturityModel>(API_URL + `/${id}`, data, { headers: authHeader() });
+  return axios.put<IMaturityModel>(apiUrl(`/api/models/${id}`), data, { headers: authHeader() });
 };
 
 const deleteModel = (id: string) => {
-  return axios.delete(API_URL + `/${id}`, { headers: authHeader() });
+  return axios.delete(apiUrl(`/api/models/${id}`), { headers: authHeader() });
 };
 
 const MaturityModelService = {

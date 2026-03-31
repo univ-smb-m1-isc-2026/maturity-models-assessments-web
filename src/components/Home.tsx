@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import { apiUrl } from '../config'
 
 const Home = () => {
   const [message, setMessage] = useState<string>('Chargement...')
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
 
   useEffect(() => {
-    axios.get('http://localhost:8080/api/hello')
+    axios.get(apiUrl('/api/hello'))
       .then(response => {
         setMessage(response.data.message)
         setStatus('success')

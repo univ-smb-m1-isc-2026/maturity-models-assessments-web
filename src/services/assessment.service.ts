@@ -2,30 +2,29 @@ import axios from "axios";
 import authHeader from "./auth-header.ts";
 import { IAssessment, IAnswer } from "../types/assessment.type.ts";
 
-import { MMA_API_URL } from "../config";
-const API_URL = MMA_API_URL + "/api/assessments/";
+import { apiUrl } from "../config";
 
 class AssessmentService {
   startAssessment(teamId: string, maturityModelId: string) {
     return axios.post<IAssessment>(
-      API_URL + "start",
+      apiUrl("/api/assessments/start"),
       { teamId, maturityModelId },
       { headers: authHeader() }
     );
   }
 
   getTeamAssessments(teamId: string) {
-    return axios.get<IAssessment[]>(API_URL + "team/" + teamId, {
+    return axios.get<IAssessment[]>(apiUrl(`/api/assessments/team/${teamId}`), {
       headers: authHeader(),
     });
   }
 
   getAssessment(id: string) {
-    return axios.get<IAssessment>(API_URL + id, { headers: authHeader() });
+    return axios.get<IAssessment>(apiUrl(`/api/assessments/${id}`), { headers: authHeader() });
   }
 
   submitAssessment(id: string, answers: IAnswer[]) {
-    return axios.put<IAssessment>(API_URL + id + "/submit", answers, {
+    return axios.put<IAssessment>(apiUrl(`/api/assessments/${id}/submit`), answers, {
       headers: authHeader(),
     });
   }

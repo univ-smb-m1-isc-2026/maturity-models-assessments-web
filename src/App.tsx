@@ -3,6 +3,7 @@ import { Routes, Route, Link } from 'react-router-dom'
 import axios from 'axios'
 import AuthService from './services/auth.service'
 import { IUser } from './types/user.type'
+import { apiUrl } from './config'
 import TeamDetails from './components/TeamDetails'
 import AssessmentView from './components/AssessmentView'
 import Register from './components/Register'
@@ -19,7 +20,7 @@ function Home() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
 
   useEffect(() => {
-    axios.get('http://localhost:8080/api/hello')
+    axios.get(apiUrl('/api/hello'))
       .then(response => {
         setMessage(response.data.message)
         setStatus('success')

@@ -2,11 +2,10 @@ import axios from "axios";
 
 import authHeader from "./auth-header.ts";
 
-import { MMA_API_URL } from "../config";
-const API_URL = MMA_API_URL + "/api/auth/";
+import { apiUrl } from "../config";
 
 const register = (firstName: string, lastName: string, email: string, password: string, teamId?: string) => {
-  return axios.post(API_URL + "signup", {
+  return axios.post(apiUrl("/api/auth/signup"), {
     firstName,
     lastName,
     email,
@@ -17,7 +16,7 @@ const register = (firstName: string, lastName: string, email: string, password: 
 
 const login = (email: string, password: string, code?: string) => {
   return axios
-    .post(API_URL + "signin", {
+    .post(apiUrl("/api/auth/signin"), {
       email,
       password,
       code
@@ -42,26 +41,26 @@ const getCurrentUser = () => {
 };
 
 const verify = (email: string, code: string) => {
-  return axios.post(API_URL + "verify", {
+  return axios.post(apiUrl("/api/auth/verify"), {
     email,
     code
   });
 };
 
 const resendVerification = (email: string) => {
-  return axios.post(API_URL + "verify/resend", null, { params: { email } });
+  return axios.post(apiUrl("/api/auth/verify/resend"), null, { params: { email } });
 };
 
 const generate2FA = () => {
-  return axios.post(API_URL + "2fa/generate", {}, { headers: authHeader() });
+  return axios.post(apiUrl("/api/auth/2fa/generate"), {}, { headers: authHeader() });
 };
 
 const enable2FA = (secret: string, code: string) => {
-  return axios.post(API_URL + "2fa/enable", { secret, code }, { headers: authHeader() });
+  return axios.post(apiUrl("/api/auth/2fa/enable"), { secret, code }, { headers: authHeader() });
 };
 
 const disable2FA = () => {
-  return axios.post(API_URL + "2fa/disable", {}, { headers: authHeader() });
+  return axios.post(apiUrl("/api/auth/2fa/disable"), {}, { headers: authHeader() });
 };
 
 const AuthService = {
