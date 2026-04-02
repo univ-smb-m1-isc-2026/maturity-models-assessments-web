@@ -101,7 +101,7 @@ const TeamsDashboard = () => {
                                 <p className="text-slate-400">You are not a member of any team yet.</p>
                             ) : (
                                 teams.map((team) => (
-                                    <li key={team.id} className="py-4 flex justify-between items-center">
+                                    <li key={team.id} className="py-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                                         <div>
                                             <p className="text-lg font-medium text-white">{team.name}</p>
                                             <p className="text-sm text-slate-400">Members: {team.members.length}</p>

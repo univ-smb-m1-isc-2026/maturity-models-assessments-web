@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Routes, Route, Link } from 'react-router-dom'
 import axios from 'axios'
+import { Menu, X } from 'lucide-react'
 import AuthService from './services/auth.service'
 import { IUser } from './types/user.type'
 import { apiUrl } from './config'
@@ -96,6 +97,7 @@ function Home() {
 
 function App() {
   const [currentUser, setCurrentUser] = useState<IUser | undefined>(() => AuthService.getCurrentUser());
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const logOut = () => {
     AuthService.logout();
@@ -107,12 +109,12 @@ function App() {
       <div className="min-h-screen bg-slate-950 text-slate-200 font-sans">
         <nav className="bg-slate-900 border-b border-slate-700 shadow-md">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
+          <div className="flex h-16 items-center justify-between">
+            <div className="flex items-center gap-4">
               <Link to={"/"} className="text-xl font-semibold text-slate-100 tracking-tight">
                 Maturity Assessment
               </Link>
-              <div className="ml-10 flex items-baseline space-x-4">
+              <div className="hidden md:flex items-baseline gap-2">
                 <Link to={"/"} className="text-slate-300 hover:text-white hover:bg-slate-800 px-3 py-2 rounded-md text-sm font-medium transition-colors">
                   Accueil
                 </Link>
@@ -130,7 +132,8 @@ function App() {
                 )}
               </div>
             </div>
-             <div className="flex items-center space-x-4">
+
+             <div className="hidden md:flex items-center gap-4">
                 {currentUser ? (
                   <>
                     <Link to={"/profile"} className="text-slate-300 hover:text-white hover:bg-slate-800 px-3 py-2 rounded-md text-sm font-medium transition-colors">
@@ -151,8 +154,91 @@ function App() {
                   </>
                 )}
             </div>
+
+            <button
+              type="button"
+              className="inline-flex items-center justify-center rounded-md p-2 text-slate-300 hover:text-white hover:bg-slate-800 md:hidden"
+              aria-controls="mobile-menu"
+              aria-expanded={mobileMenuOpen}
+              onClick={() => setMobileMenuOpen((v) => !v)}
+            >
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
           </div>
         </div>
+        {mobileMenuOpen && (
+          <div id="mobile-menu" className="md:hidden border-t border-slate-700">
+            <div className="px-2 py-3 space-y-1">
+              <Link
+                to={"/"}
+                onClick={() => setMobileMenuOpen(false)}
+                className="block text-slate-300 hover:text-white hover:bg-slate-800 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              >
+                Accueil
+              </Link>
+              {currentUser && (
+                <>
+                  <Link
+                    to={"/teams"}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block text-slate-300 hover:text-white hover:bg-slate-800 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                  >
+                    Teams
+                  </Link>
+                  {currentUser.roles?.includes("ROLE_PMO") && (
+                    <Link
+                      to={"/admin/models"}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block text-slate-300 hover:text-white hover:bg-slate-800 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                    >
+                      Admin Models
+                    </Link>
+                  )}
+                </>
+              )}
+            </div>
+            <div className="border-t border-slate-700 px-2 py-3">
+              {currentUser ? (
+                <div className="space-y-2">
+                  <Link
+                    to={"/profile"}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block text-slate-300 hover:text-white hover:bg-slate-800 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                  >
+                    {currentUser.firstName} {currentUser.lastName}
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      logOut();
+                    }}
+                    className="w-full bg-red-700 text-white hover:bg-red-600 px-4 py-2 rounded-md text-sm font-medium transition-colors shadow-sm"
+                  >
+                    LogOut
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <Link
+                    to={"/login"}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block text-slate-300 hover:text-white hover:bg-slate-800 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    to={"/register"}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block bg-blue-700 text-white hover:bg-blue-600 px-4 py-2 rounded-md text-sm font-medium transition-colors shadow-sm text-center"
+                  >
+                    Sign Up
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </nav>
 
       <Routes>

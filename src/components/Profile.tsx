@@ -75,22 +75,24 @@ const Profile = () => {
                 <dd className="mt-1 text-sm text-white sm:mt-0 sm:col-span-2">
                   {currentUser.using2FA ? (
                     <div>
-                      <span className="inline-flex items-center rounded-md bg-green-500/10 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-inset ring-green-500/20 mr-4">
-                        Enabled
-                      </span>
-                      <button
-                        onClick={handleDisable2FA}
-                        className="rounded-md bg-red-500 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-red-400"
-                      >
-                        Disable 2FA
-                      </button>
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                        <span className="inline-flex items-center rounded-md bg-green-500/10 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-inset ring-green-500/20">
+                          Enabled
+                        </span>
+                        <button
+                          onClick={handleDisable2FA}
+                          className="w-full sm:w-auto rounded-md bg-red-500 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-red-400"
+                        >
+                          Disable 2FA
+                        </button>
+                      </div>
                     </div>
                   ) : (
                     <div>
                       {!is2FASetup ? (
                         <button
                           onClick={handleInitiate2FA}
-                          className="rounded-md bg-indigo-500 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400"
+                          className="w-full sm:w-auto rounded-md bg-indigo-500 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400"
                         >
                           Enable 2FA
                         </button>
@@ -102,23 +104,23 @@ const Profile = () => {
                           <p className="text-xs text-slate-400">
                             Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)
                           </p>
-                          <div className="flex items-center gap-2">
+                          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                             <input
                               type="text"
                               value={verificationCode}
                               onChange={(e) => setVerificationCode(e.target.value)}
-                              className="block rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 px-3"
+                              className="block w-full sm:w-auto rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 px-3"
                               placeholder="Enter code"
                             />
                             <button
                               onClick={handleVerify2FA}
-                              className="rounded-md bg-green-500 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-green-400"
+                              className="w-full sm:w-auto rounded-md bg-green-500 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-green-400"
                             >
                               Verify & Enable
                             </button>
                             <button
                               onClick={() => setIs2FASetup(false)}
-                              className="rounded-md bg-slate-500 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-slate-400"
+                              className="w-full sm:w-auto rounded-md bg-slate-500 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-slate-400"
                             >
                               Cancel
                             </button>

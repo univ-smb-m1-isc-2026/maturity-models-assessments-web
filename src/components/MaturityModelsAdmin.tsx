@@ -142,11 +142,11 @@ const MaturityModelsAdmin = () => {
     if (view === "list") {
         return (
             <div className="min-h-full py-10 px-4 sm:px-6 lg:px-8 text-white">
-                <header className="mb-8 flex justify-between items-center">
+                <header className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <h1 className="text-3xl font-bold tracking-tight text-white">Maturity Models</h1>
                     <button
                         onClick={handleCreateModel}
-                        className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
+                        className="w-full sm:w-auto rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
                     >
                         Create New Model
                     </button>
@@ -164,12 +164,12 @@ const MaturityModelsAdmin = () => {
                     <div className="bg-slate-800 shadow overflow-hidden sm:rounded-md border border-slate-700">
                         <ul className="divide-y divide-slate-700">
                             {models.map((model) => (
-                                <li key={model.id} className="px-6 py-4 flex items-center justify-between hover:bg-slate-700/50">
+                                <li key={model.id} className="px-6 py-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between hover:bg-slate-700/50">
                                     <div>
                                         <p className="text-lg font-medium text-white">{model.name}</p>
                                         <p className="text-sm text-slate-400">{model.questions.length} Questions</p>
                                     </div>
-                                    <div className="flex space-x-4">
+                                    <div className="flex flex-wrap gap-4">
                                         <button
                                             onClick={() => handleEditModel(model)}
                                             className="text-indigo-400 hover:text-indigo-300 text-sm font-medium"
@@ -225,12 +225,12 @@ const MaturityModelsAdmin = () => {
                 </div>
 
                 <div className="space-y-4">
-                    <div className="flex justify-between items-center">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <h2 className="text-xl font-semibold text-white">Questions</h2>
                         <button
                             type="button"
                             onClick={addQuestion}
-                            className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
+                            className="w-full sm:w-auto rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
                         >
                             Add Question
                         </button>
@@ -261,8 +261,8 @@ const MaturityModelsAdmin = () => {
                             <div className="space-y-3 mt-4">
                                 <p className="text-sm font-medium text-indigo-400">Maturity Levels (1 = Least Mature, 5 = Most Mature)</p>
                                 {question.levels.map((level, lIndex) => (
-                                    <div key={lIndex} className="flex items-center gap-4">
-                                        <span className="text-slate-400 w-16 text-sm">Level {level.value}</span>
+                                    <div key={lIndex} className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
+                                        <span className="text-slate-400 w-full sm:w-16 text-sm">Level {level.value}</span>
                                         <input
                                             type="text"
                                             value={level.description}
