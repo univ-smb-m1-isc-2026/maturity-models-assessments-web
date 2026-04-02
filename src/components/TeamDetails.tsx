@@ -318,7 +318,7 @@ const TeamDetails = () => {
                     <h2 className="text-xl font-semibold mb-4 text-indigo-400">Team Members ({team.members.length})</h2>
                     <ul className="divide-y divide-slate-700">
                         {team.members.map((member) => (
-                            <li key={member.id} className="py-3 flex items-center justify-between">
+                            <li key={member.id} className="py-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                                 <div className="flex items-center">
                                     <div className="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold mr-3">
                                         {(member.firstName || member.email || "?").charAt(0).toUpperCase()}
@@ -353,7 +353,7 @@ const TeamDetails = () => {
                                                     </label>
                                                 ))}
                                             </div>
-                                            <div className="flex gap-2">
+                                            <div className="flex flex-wrap gap-2">
                                                 <button 
                                                     onClick={() => member.id && handleUpdateRoles(member.id)}
                                                     className="px-2 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-500"
@@ -371,7 +371,7 @@ const TeamDetails = () => {
                                     )}
                                 </div>
                             </div>
-                            <div className="flex flex-col items-end gap-2">
+                            <div className="flex flex-row flex-wrap items-center gap-3 sm:flex-col sm:items-end sm:gap-2">
                                 {canEditRoles && (
                                     <button 
                                         onClick={() => {
@@ -450,7 +450,7 @@ const TeamDetails = () => {
                      ) : (
                         <ul className="divide-y divide-slate-700">
                             {assessments.map((assessment) => (
-                                <li key={assessment.id} className="py-3 flex items-center justify-between">
+                                <li key={assessment.id} className="py-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                                     <div>
                                         <p className="text-sm font-medium text-white">{assessment.maturityModel.name}</p>
                                         <p className="text-xs text-slate-400">
@@ -472,11 +472,11 @@ const TeamDetails = () => {
 
                 {canManageModels && (
                     <div className="md:col-span-2 bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
-                        <div className="flex justify-between items-center mb-4">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
                             <h2 className="text-xl font-semibold text-indigo-400">Team Maturity Models</h2>
                             <button
                                 onClick={() => setIsCreatingModel(!isCreatingModel)}
-                                className="px-3 py-1 bg-indigo-600 text-white text-sm rounded hover:bg-indigo-500"
+                                className="w-full sm:w-auto px-3 py-2 bg-indigo-600 text-white text-sm rounded hover:bg-indigo-500"
                             >
                                 {isCreatingModel ? "Cancel" : "Create Model"}
                             </button>
@@ -504,7 +504,7 @@ const TeamDetails = () => {
                                 
                                 <div className="mt-4">
                                     <label className="block text-sm font-medium text-slate-300 mb-2">Questions</label>
-                                    <div className="flex gap-2 mb-2">
+                                    <div className="flex flex-col gap-2 sm:flex-row mb-2">
                                         <input
                                             type="text"
                                             value={currentQuestionText}
@@ -515,7 +515,7 @@ const TeamDetails = () => {
                                         <button
                                             type="button"
                                             onClick={addQuestion}
-                                            className="px-3 py-1.5 bg-slate-700 text-white text-sm rounded hover:bg-slate-600"
+                                            className="w-full sm:w-auto px-3 py-2 bg-slate-700 text-white text-sm rounded hover:bg-slate-600"
                                         >
                                             Add
                                         </button>
@@ -525,12 +525,12 @@ const TeamDetails = () => {
                                         <ul className="space-y-2 mt-2 max-h-40 overflow-y-auto">
                                             {newQuestions.map((q, idx) => (
                                                 <li key={idx} className="flex flex-col bg-slate-800 p-2 rounded border border-slate-700">
-                                                    <div className="flex justify-between items-center mb-2">
+                                                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-2">
                                                         <span className="text-sm text-slate-300 font-medium">{q.text}</span>
                                                         <button
                                                             type="button"
                                                             onClick={() => removeQuestion(idx)}
-                                                            className="text-red-400 hover:text-red-300 text-xs ml-2"
+                                                                className="text-red-400 hover:text-red-300 text-xs sm:ml-2"
                                                         >
                                                             Remove
                                                         </button>
@@ -566,9 +566,9 @@ const TeamDetails = () => {
 
                         <ul className="divide-y divide-slate-700">
                             {availableModels.map(model => (
-                                <li key={model.id} className="py-3 flex justify-between items-center">
-                                    <span className="text-white">{model.name}</span>
-                                    <div className="flex items-center gap-4">
+                                <li key={model.id} className="py-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                                    <span className="text-white break-words">{model.name}</span>
+                                    <div className="flex flex-wrap items-center gap-4">
                                         <span className="text-xs text-slate-400">
                                             {model.questions.length} questions
                                         </span>
@@ -588,7 +588,7 @@ const TeamDetails = () => {
 
                         {editingModel && (
                             <form onSubmit={handleSaveEditModel} className="mt-6 p-4 bg-slate-900 rounded border border-indigo-700">
-                                <div className="flex justify-between items-center mb-4">
+                                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
                                     <h3 className="text-base font-semibold text-indigo-300">Editing: {editingModel.name}</h3>
                                     <button
                                         type="button"
@@ -618,12 +618,12 @@ const TeamDetails = () => {
                                 </div>
 
                                 <div className="mb-3">
-                                    <div className="flex justify-between items-center mb-2">
+                                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-2">
                                         <span className="text-sm font-medium text-slate-300">Questions</span>
                                         <button
                                             type="button"
                                             onClick={addEditQuestion}
-                                            className="text-xs px-2 py-1 bg-slate-700 text-white rounded hover:bg-slate-600"
+                                            className="w-full sm:w-auto text-xs px-2 py-2 bg-slate-700 text-white rounded hover:bg-slate-600"
                                         >
                                             + Add Question
                                         </button>
@@ -631,12 +631,12 @@ const TeamDetails = () => {
                                     <ul className="space-y-3 max-h-80 overflow-y-auto">
                                         {editingModel.questions.map((q, qIdx) => (
                                             <li key={q.text || qIdx} className="bg-slate-800 p-3 rounded border border-slate-700">
-                                                <div className="flex justify-between items-center mb-2">
+                                                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-2">
                                                     <input
                                                         type="text"
                                                         value={q.text}
                                                         onChange={(e) => handleEditQuestionChange(qIdx, e.target.value)}
-                                                        className="flex-1 text-sm bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 mr-2"
+                                                        className="flex-1 text-sm bg-slate-900 border border-slate-700 rounded px-2 py-2 text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 sm:mr-2"
                                                         placeholder="Question text..."
                                                         required
                                                     />

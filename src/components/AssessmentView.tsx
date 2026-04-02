@@ -123,8 +123,8 @@ const AssessmentView = () => {
 
             <div className="mb-12 bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
                 <h2 className="text-xl font-semibold text-white mb-4">Team Maturity Radar</h2>
-                <div className="h-96 w-full">
-                    <ResponsiveContainer width="100%" height="100%">
+                <div className="h-72 sm:h-96 w-full">
+                    <ResponsiveContainer width="100%" height="100%" minWidth={320} minHeight={288}>
                         <RadarChart cx="50%" cy="50%" outerRadius="80%" data={chartData}>
                             <PolarGrid stroke="#475569" />
                             <PolarAngleAxis dataKey="subject" tick={{ fill: '#e2e8f0', fontSize: 12 }} />
@@ -197,17 +197,17 @@ const AssessmentView = () => {
                     </div>
                 ))}
 
-                <div className="flex items-center justify-end gap-x-6">
+                <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end sm:gap-x-6">
                     <button
                         type="button"
-                        className="text-sm font-semibold leading-6 text-white hover:text-indigo-300"
+                        className="w-full sm:w-auto text-sm font-semibold leading-6 text-white hover:text-indigo-300"
                         onClick={() => window.history.back()}
                     >
                         Cancel
                     </button>
                     <button
                             type="submit"
-                            className="w-full rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                            className="w-full sm:w-auto rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         >
                         Save Assessment
                     </button>

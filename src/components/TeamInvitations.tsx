@@ -104,8 +104,9 @@ const TeamInvitations = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-6">
-      <div className="flex items-center justify-between mb-6">
+    <div className="min-h-full py-10 px-4 sm:px-6 lg:px-8 text-white">
+      <div className="mx-auto max-w-5xl">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-6">
         <h1 className="text-2xl font-semibold text-indigo-400">Team Invitations</h1>
         <Link to={`/teams/${id}`} className="text-sm text-slate-300 hover:text-white">Back to Team</Link>
       </div>
@@ -116,7 +117,8 @@ const TeamInvitations = () => {
         <div className="rounded-md p-4 bg-red-900/30 border border-red-800">{message}</div>
       ) : (
         <div className="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
-          <table className="min-w-full divide-y divide-slate-700">
+          <div className="overflow-x-auto -mx-6 px-6">
+          <table className="min-w-[900px] divide-y divide-slate-700 whitespace-nowrap">
             <thead>
               <tr>
                 <th className="px-4 py-2 text-left text-xs font-medium text-slate-400">Invitee</th>
@@ -183,6 +185,7 @@ const TeamInvitations = () => {
               )}
             </tbody>
           </table>
+          </div>
           <div className="mt-4 text-xs text-slate-400">
             Only Owner, PMO, or Team Leader can view this log.
           </div>
@@ -193,6 +196,7 @@ const TeamInvitations = () => {
           )}
         </div>
       )}
+      </div>
     </div>
   );
 };

@@ -48,7 +48,7 @@ const InvitationAccept = () => {
         <p className="text-sm">{message || "Processing..."}</p>
       </div>
       {status === "need_auth" && (
-        <div className="mt-4 flex space-x-3">
+        <div className="mt-4 flex flex-col gap-3 sm:flex-row">
           <Link to={`/login`} className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500">
             Login
           </Link>
