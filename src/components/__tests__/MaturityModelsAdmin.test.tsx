@@ -3,8 +3,12 @@ import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import MaturityModelsAdmin from '../MaturityModelsAdmin';
 import MaturityModelService from '../../services/maturity-model.service';
+import TeamService from '../../services/team.service';
+import AuthService from '../../services/auth.service';
 
 vi.mock('../../services/maturity-model.service');
+vi.mock('../../services/team.service');
+vi.mock('../../services/auth.service');
 
 const mockModels = [
   {
@@ -25,6 +29,17 @@ describe('MaturityModelsAdmin Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.spyOn(window, 'confirm').mockImplementation(() => true);
+    (AuthService.getCurrentUser as any).mockReturnValue({ id: 'user-1' });
+    (TeamService.getUserTeams as any).mockResolvedValue({
+      data: [
+        {
+          id: 'team-1',
+          name: 'Team 1',
+          owner: { id: 'user-1' },
+          members: [{ id: 'user-1', roles: ['ROLE_PMO'] }]
+        }
+      ]
+    });
   });
 
   it('renders list of models correctly', async () => {
@@ -94,6 +109,7 @@ describe('MaturityModelsAdmin Component', () => {
     await waitFor(() => {
       expect(MaturityModelService.createModel).toHaveBeenCalledWith(expect.objectContaining({
         name: 'New Model',
+        teamId: 'team-1',
         questions: expect.arrayContaining([
           expect.objectContaining({ text: 'New Question' })
         ])

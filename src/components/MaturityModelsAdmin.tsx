@@ -1,17 +1,47 @@
 import { useState, useEffect, FormEvent, useCallback } from "react";
 import MaturityModelService from "../services/maturity-model.service";
 import { IMaturityModel, IQuestion } from "../types/maturity-model.type";
+import TeamService from "../services/team.service";
+import AuthService from "../services/auth.service";
+import { ITeam } from "../types/team.type";
 
 const MaturityModelsAdmin = () => {
     const [models, setModels] = useState<IMaturityModel[]>([]);
+    const [manageableTeams, setManageableTeams] = useState<ITeam[]>([]);
+    const [selectedTeamId, setSelectedTeamId] = useState("");
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState("");
     const [view, setView] = useState<"list" | "form">("list");
     
     const [currentModel, setCurrentModel] = useState<IMaturityModel>({
         name: "",
+        teamId: "",
         questions: []
     });
+
+    const currentUser = AuthService.getCurrentUser();
+
+    const loadManageableTeams = useCallback(() => {
+        TeamService.getUserTeams().then(
+            (response) => {
+                const teams: ITeam[] = response.data || [];
+                const filtered = teams.filter((team) => {
+                    const isOwner = team.owner?.id === currentUser?.id;
+                    const myMembership = team.members?.find((m) => m.id === currentUser?.id);
+                    const isPMO = myMembership?.roles?.includes("ROLE_PMO") ?? false;
+                    return isOwner || isPMO;
+                });
+
+                setManageableTeams(filtered);
+                if (!selectedTeamId && filtered.length > 0) {
+                    setSelectedTeamId(filtered[0].id);
+                }
+            },
+            () => {
+                setManageableTeams([]);
+            }
+        );
+    }, [currentUser?.id, selectedTeamId]);
 
     const loadModels = useCallback(() => {
         MaturityModelService.getAllModels().then(
@@ -34,16 +64,18 @@ const MaturityModelsAdmin = () => {
 
     useEffect(() => {
         loadModels();
-    }, [loadModels]);
+        loadManageableTeams();
+    }, [loadModels, loadManageableTeams]);
 
     const handleCreateModel = () => {
-        setCurrentModel({ name: "", questions: [] });
+        setCurrentModel({ name: "", teamId: selectedTeamId || "", questions: [] });
         setView("form");
         setMessage("");
     };
 
     const handleEditModel = (model: IMaturityModel) => {
         setCurrentModel(model);
+        setSelectedTeamId(model.teamId || selectedTeamId);
         setView("form");
         setMessage("");
     };
@@ -67,9 +99,34 @@ const MaturityModelsAdmin = () => {
         e.preventDefault();
         setMessage("");
 
+        if (!selectedTeamId) {
+            setMessage("Please select a team.");
+            return;
+        }
+
+        if (currentModel.questions.length === 0) {
+            setMessage("Please add at least one question.");
+            return;
+        }
+
+        const sanitizedQuestions = currentModel.questions.map((q, qIdx) => ({
+            ...q,
+            levels: q.levels.map((lvl, lIdx) => ({
+                value: lvl.value,
+                description: (lvl.description || "").trim() || `Level ${lIdx + 1}`
+            })),
+            text: (q.text || "").trim() || `Question ${qIdx + 1}`
+        }));
+
+        const payload: IMaturityModel = {
+            ...currentModel,
+            teamId: currentModel.teamId || selectedTeamId,
+            questions: sanitizedQuestions
+        };
+
         setLoading(true);
         if (currentModel.id) {
-            MaturityModelService.updateModel(currentModel.id, currentModel).then(
+            MaturityModelService.updateModel(currentModel.id, payload).then(
                 () => {
                     setMessage("Model updated successfully!");
                     loadModels();
@@ -87,7 +144,7 @@ const MaturityModelsAdmin = () => {
                 }
             );
         } else {
-            MaturityModelService.createModel(currentModel).then(
+            MaturityModelService.createModel(payload).then(
                 () => {
                     setMessage("Model created successfully!");
                     loadModels();
@@ -111,11 +168,11 @@ const MaturityModelsAdmin = () => {
         const newQuestion: IQuestion = {
             text: "",
             levels: [
-                { value: 1, description: "" },
-                { value: 2, description: "" },
-                { value: 3, description: "" },
-                { value: 4, description: "" },
-                { value: 5, description: "" },
+                { value: 1, description: "Initial" },
+                { value: 2, description: "Managed" },
+                { value: 3, description: "Defined" },
+                { value: 4, description: "Quantitatively Managed" },
+                { value: 5, description: "Optimizing" },
             ]
         };
         setCurrentModel({ ...currentModel, questions: [...currentModel.questions, newQuestion] });
@@ -222,6 +279,29 @@ const MaturityModelsAdmin = () => {
                             required
                         />
                     </div>
+
+                    <div>
+                        <label htmlFor="teamId" className="block text-sm font-medium text-slate-300">Team</label>
+                        <select
+                            id="teamId"
+                            value={selectedTeamId}
+                            onChange={(e) => {
+                                setSelectedTeamId(e.target.value);
+                                setCurrentModel({ ...currentModel, teamId: e.target.value });
+                            }}
+                            className="mt-1 block w-full rounded-md border-0 bg-slate-900 py-1.5 text-white shadow-sm ring-1 ring-inset ring-slate-600 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 px-3"
+                            required
+                            disabled={!!currentModel.id}
+                        >
+                            <option value="" disabled>Select a team</option>
+                            {manageableTeams.map((team) => (
+                                <option key={team.id} value={team.id}>{team.name}</option>
+                            ))}
+                        </select>
+                        {currentModel.id && (
+                            <p className="mt-1 text-xs text-slate-400">Team cannot be changed for an existing model.</p>
+                        )}
+                    </div>
                 </div>
 
                 <div className="space-y-4">
@@ -269,7 +349,6 @@ const MaturityModelsAdmin = () => {
                                             onChange={(e) => handleLevelChange(qIndex, lIndex, e.target.value)}
                                             className="block w-full rounded-md border-0 bg-slate-900 py-1.5 text-white shadow-sm ring-1 ring-inset ring-slate-600 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 px-3"
                                             placeholder={`Description for level ${level.value}`}
-                                            required
                                         />
                                     </div>
                                 ))}

@@ -2,12 +2,17 @@ import { useState, useEffect, FormEvent, useCallback } from "react";
 import TeamService from "../services/team.service";
 import { Link } from "react-router-dom";
 import { ITeam } from "../types/team.type";
+import AuthService from "../services/auth.service";
 
 const TeamsDashboard = () => {
     const [teams, setTeams] = useState<ITeam[]>([]);
     const [newTeamName, setNewTeamName] = useState("");
     const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(true);
+    const currentUser = AuthService.getCurrentUser();
+    const roles: string[] = currentUser?.roles ?? [];
+    const hasTeamCreationRole = roles.includes("ROLE_PMO") || roles.includes("ROLE_TEAM_LEADER");
+    const canCreateTeam = hasTeamCreationRole;
 
     const loadTeams = useCallback(() => {
         TeamService.getUserTeams().then(
@@ -35,6 +40,12 @@ const TeamsDashboard = () => {
     const handleCreateTeam = (e: FormEvent) => {
         e.preventDefault();
         setMessage("");
+
+        if (!canCreateTeam) {
+            setMessage("You cannot create a team with your current profile. You must be invited to an existing team.");
+            return;
+        }
+
         setLoading(true);
 
         TeamService.createTeam(newTeamName).then(
@@ -62,34 +73,45 @@ const TeamsDashboard = () => {
                 <h1 className="text-3xl font-bold tracking-tight text-white">My Teams</h1>
             </header>
 
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-                <div className="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
-                    <h2 className="text-xl font-semibold mb-4 text-indigo-400">Create New Team</h2>
-                    <form onSubmit={handleCreateTeam} className="space-y-4">
-                        <div>
-                            <label htmlFor="teamName" className="block text-sm font-medium text-slate-300">Team Name</label>
-                            <input
-                                type="text"
-                                id="teamName"
-                                value={newTeamName}
-                                onChange={(e) => setNewTeamName(e.target.value)}
-                                className="mt-1 block w-full rounded-md border-0 bg-slate-900 py-1.5 text-white shadow-sm ring-1 ring-inset ring-slate-600 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 px-3"
-                                required
-                            />
-                        </div>
-                        <button
-                            type="submit"
-                            className="w-full rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                        >
-                            Create New Team
-                        </button>
-                    </form>
-                    {message && (
-                        <div className="mt-4 p-2 rounded bg-slate-700 text-sm">
-                            {message}
-                        </div>
-                    )}
-                </div>
+            <div className={`grid grid-cols-1 gap-8 ${canCreateTeam ? "md:grid-cols-2" : "md:grid-cols-1"}`}>
+                {canCreateTeam && (
+                    <div className="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
+                        <h2 className="text-xl font-semibold mb-4 text-indigo-400">Create New Team</h2>
+                        <form onSubmit={handleCreateTeam} className="space-y-4">
+                            <div>
+                                <label htmlFor="teamName" className="block text-sm font-medium text-slate-300">Team Name</label>
+                                <input
+                                    type="text"
+                                    id="teamName"
+                                    value={newTeamName}
+                                    onChange={(e) => setNewTeamName(e.target.value)}
+                                    className="mt-1 block w-full rounded-md border-0 bg-slate-900 py-1.5 text-white shadow-sm ring-1 ring-inset ring-slate-600 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 px-3"
+                                    required
+                                />
+                            </div>
+                            <button
+                                type="submit"
+                                className="w-full rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                            >
+                                Create New Team
+                            </button>
+                        </form>
+                        {message && (
+                            <div className="mt-4 p-2 rounded bg-slate-700 text-sm">
+                                {message}
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {!canCreateTeam && (
+                    <div className="bg-amber-500/10 border border-amber-500/30 p-6 rounded-lg shadow-md">
+                        <h2 className="text-xl font-semibold mb-2 text-amber-300">Waiting for invitation</h2>
+                        <p className="text-amber-100 text-sm">
+                            You cannot create a team with your current profile. You will be able to work as soon as a Team Leader or PMO invites you.
+                        </p>
+                    </div>
+                )}
 
                 <div className="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
                     <h2 className="text-xl font-semibold mb-4 text-indigo-400">Your Teams</h2>

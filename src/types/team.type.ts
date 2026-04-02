@@ -1,7 +1,7 @@
 import { IUser } from "./user.type";
 
 export interface ITeamMember extends IUser {
-
+  teamRoles?: string[];
   joinedAt?: string;
 }
 

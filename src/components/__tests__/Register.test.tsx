@@ -32,6 +32,7 @@ describe('Register Component', () => {
     expect(screen.getByLabelText(/^Email/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/^Password/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Confirm Password/i)).toBeInTheDocument();
+    expect(screen.getByText(/Select your role/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Sign up/i })).toBeInTheDocument();
   });
 
@@ -69,10 +70,11 @@ describe('Register Component', () => {
     await user.type(screen.getByLabelText(/^Email/i), 'john@example.com');
     await user.type(screen.getByLabelText(/^Password/i), 'password123');
     await user.type(screen.getByLabelText(/Confirm Password/i), 'password123');
+    await user.click(screen.getByLabelText(/Team Leader/i));
     await user.click(screen.getByRole('button', { name: /Sign up/i }));
 
     await waitFor(() => {
-      expect(AuthService.register).toHaveBeenCalledWith('John', 'Doe', 'john@example.com', 'password123', undefined);
+      expect(AuthService.register).toHaveBeenCalledWith('John', 'Doe', 'john@example.com', 'password123', ['ROLE_TEAM_LEADER'], undefined);
       expect(screen.getByText(/User registered successfully/i)).toBeInTheDocument();
     });
   });

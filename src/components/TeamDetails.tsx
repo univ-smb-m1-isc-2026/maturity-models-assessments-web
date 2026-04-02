@@ -14,6 +14,7 @@ const TeamDetails = () => {
     const [team, setTeam] = useState<ITeam | null>(null);
     const [assessments, setAssessments] = useState<IAssessment[]>([]);
     const [availableModels, setAvailableModels] = useState<IMaturityModel[]>([]);
+    const [assessmentModels, setAssessmentModels] = useState<IMaturityModel[]>([]);
     const [selectedModelId, setSelectedModelId] = useState("");
     const [inviteEmail, setInviteEmail] = useState("");
     const [message, setMessage] = useState("");
@@ -65,12 +66,21 @@ const TeamDetails = () => {
             MaturityModelService.getModelsByTeam(id).then(
                 (response) => {
                     setAvailableModels(response.data);
+                },
+                (error) => {
+                    console.error("Error loading models", error);
+                }
+            );
+
+            MaturityModelService.getAllModels().then(
+                (response) => {
+                    setAssessmentModels(response.data);
                     if (response.data.length > 0 && response.data[0].id) {
                         setSelectedModelId(response.data[0].id);
                     }
                 },
                 (error) => {
-                    console.error("Error loading models", error);
+                    console.error("Error loading global models", error);
                 }
             );
         }
@@ -133,25 +143,30 @@ const TeamDetails = () => {
     };
 
     const handleUpdateRoles = (memberId: string) => {
-        if (id && memberId && selectedRoles.length > 0) {
-            TeamService.updateMemberRoles(id, memberId, selectedRoles).then(
-                (response) => {
-                    setMessage(response.data.message);
-                    setEditingMember(null);
-                    setSelectedRoles([]);
-                    loadTeam();
-                },
-                (error) => {
-                    const resMessage =
-                        (error.response &&
-                            error.response.data &&
-                            error.response.data.message) ||
-                        error.message ||
-                        error.toString();
-                    setMessage(resMessage);
-                }
-            );
+        if (!id || !memberId) return;
+
+        if (selectedRoles.length === 0) {
+            setMessage("Please select at least one role.");
+            return;
         }
+
+        TeamService.updateMemberRoles(id, memberId, selectedRoles).then(
+            (response) => {
+                setMessage(response.data.message);
+                setEditingMember(null);
+                setSelectedRoles([]);
+                loadTeam();
+            },
+            (error) => {
+                const resMessage =
+                    (error.response &&
+                        error.response.data &&
+                        error.response.data.message) ||
+                    error.message ||
+                    error.toString();
+                setMessage(resMessage);
+            }
+        );
     };
 
     const handleCreateModel = (e: FormEvent) => {
@@ -285,16 +300,20 @@ const TeamDetails = () => {
     }
 
     const currentUserId = currentUser?.id;
+    const profileRoles: string[] = currentUser?.roles ?? [];
+    const isProfilePMO = profileRoles.includes("ROLE_PMO");
+    const hasManagementProfile = profileRoles.includes("ROLE_PMO") || profileRoles.includes("ROLE_TEAM_LEADER");
+    const isProfileMemberOnly = profileRoles.includes("ROLE_TEAM_MEMBER") && !hasManagementProfile;
     const currentMember = team.members.find((m) => m.id === currentUserId);
-    const currentTeamRoles = currentMember?.roles ?? [];
+    const currentTeamRoles = currentMember?.teamRoles ?? currentMember?.roles ?? [];
 
     const isOwner = currentUserId === team.owner.id;
     const isPMO = currentTeamRoles.includes("ROLE_PMO");
     const isTeamLeader = currentTeamRoles.includes("ROLE_TEAM_LEADER");
-    const canInviteMembers = isOwner || isPMO || isTeamLeader;
-    const canStartAssessments = isOwner || isPMO || isTeamLeader;
-    const canManageModels = isOwner || isPMO;
-    const canEditRoles = isOwner || isPMO;
+    const canInviteMembers = !isProfileMemberOnly && (isOwner || isPMO || isTeamLeader);
+    const canStartAssessments = !isProfileMemberOnly && (isOwner || isPMO || isTeamLeader);
+    const canManageModels = isProfilePMO;
+    const canEditRoles = isPMO;
 
     return (
         <div className="min-h-full py-10 px-4 sm:px-6 lg:px-8 text-white">
@@ -312,6 +331,12 @@ const TeamDetails = () => {
                         : (team.owner.email || "Unknown")}
                 </span></p>
             </header>
+
+            {isProfileMemberOnly && (
+                <div className="mb-6 rounded-md border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
+                    Your profile is Team Member. You can view team information, but management actions are disabled.
+                </div>
+            )}
 
             <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
                 <div className="md:col-span-2 bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
@@ -331,7 +356,7 @@ const TeamDetails = () => {
                                         </p>
                                         <p className="text-xs text-slate-400">{member.email}</p>
                                     <div className="flex gap-1 mt-1">
-                                        {member.roles && member.roles.map(role => (
+                                        {(member.roles && member.roles.length > 0 ? member.roles : ["ROLE_TEAM_MEMBER"]).map(role => (
                                             <span key={role} className="text-[10px] px-1.5 py-0.5 rounded bg-slate-700 text-slate-300">
                                                 {role.replace('ROLE_', '').replace('_', ' ')}
                                             </span>
@@ -378,9 +403,10 @@ const TeamDetails = () => {
                                             setEditingMember(member.id || null);
                                             
                                             const currentRoles: string[] = [];
-                                            if (member.roles?.includes("ROLE_PMO")) currentRoles.push("pmo");
-                                            if (member.roles?.includes("ROLE_TEAM_LEADER")) currentRoles.push("leader");
-                                            if (member.roles?.includes("ROLE_TEAM_MEMBER")) currentRoles.push("user");
+                                            const memberTeamRoles = member.teamRoles ?? member.roles ?? [];
+                                            if (memberTeamRoles.includes("ROLE_PMO")) currentRoles.push("pmo");
+                                            if (memberTeamRoles.includes("ROLE_TEAM_LEADER")) currentRoles.push("leader");
+                                            if (memberTeamRoles.includes("ROLE_TEAM_MEMBER")) currentRoles.push("user");
                                             setSelectedRoles(currentRoles);
                                         }}
                                         className="text-xs text-indigo-400 hover:text-indigo-300"
@@ -692,7 +718,7 @@ const TeamDetails = () => {
                                         onChange={(e) => setSelectedModelId(e.target.value)}
                                         className="mt-1 block w-full rounded-md border-0 bg-slate-900 py-1.5 text-white shadow-sm ring-1 ring-inset ring-slate-600 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 px-3"
                                     >
-                                        {availableModels.map(model => (
+                                        {assessmentModels.map(model => (
                                             <option key={model.id} value={model.id}>{model.name}</option>
                                         ))}
                                     </select>
@@ -707,6 +733,11 @@ const TeamDetails = () => {
                             {assessmentMessage && (
                                 <div className={`mt-4 p-2 rounded text-sm ${assessmentMessage.includes("success") ? "bg-green-900/50 text-green-400" : "bg-red-900/50 text-red-400"}`}>
                                     {assessmentMessage}
+                                </div>
+                            )}
+                            {assessmentModels.length === 0 && (
+                                <div className="mt-4 p-2 rounded text-sm bg-slate-700 text-slate-300">
+                                    No model available yet. Ask a PMO to create one.
                                 </div>
                             )}
                         </>
