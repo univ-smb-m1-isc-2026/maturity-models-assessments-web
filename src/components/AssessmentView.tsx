@@ -37,7 +37,7 @@ const AssessmentView = () => {
             },
             (error) => {
                 console.error("Error loading assessment", error);
-                setMessage("Error loading assessment.");
+                setMessage("Erreur lors du chargement de l'évaluation.");
                 setLoading(false);
             }
         );
@@ -62,12 +62,12 @@ const AssessmentView = () => {
         if (assessment && id) {
             AssessmentService.submitAssessment(id, answers).then(
                 () => {
-                    setMessage("Assessment submitted successfully!");
+                    setMessage("Évaluation envoyée avec succès !");
                     loadAssessment();
                 },
                 (error) => {
                     console.error("Error saving assessment", error);
-                    setMessage("Error saving assessment.");
+                    setMessage("Erreur lors de l'enregistrement de l'évaluation.");
                 }
             );
         }
@@ -96,35 +96,35 @@ const AssessmentView = () => {
 
     const colors = ["#ef4444", "#f97316", "#f59e0b", "#84cc16", "#10b981", "#06b6d4", "#3b82f6", "#8b5cf6", "#d946ef", "#f43f5e"];
 
-    if (loading) return <div className="text-white text-center mt-10">Loading assessment...</div>;
+    if (loading) return <div className="text-white text-center mt-10">Chargement de l'évaluation...</div>;
     if (message && !assessment) return <div className="text-center mt-10 text-red-400">{message}</div>;
-    if (!assessment) return <div className="text-white text-center mt-10">Assessment not found.</div>;
+    if (!assessment) return <div className="text-white text-center mt-10">Évaluation introuvable.</div>;
 
     return (
         <div className="min-h-full py-10 px-4 sm:px-6 lg:px-8 text-white">
             <div className="mb-6">
                 <Link to={`/teams/${assessment.team.id}`} className="text-indigo-400 hover:text-indigo-300">
-                    &larr; Back to Team
+                    &larr; Retour à l'équipe
                 </Link>
             </div>
 
             <header className="mb-8 border-b border-slate-700 pb-4">
                 <h1 className="text-3xl font-bold tracking-tight text-white">
-                    Assessment: {assessment.maturityModel.name}
+                    Évaluation : {assessment.maturityModel.name}
                 </h1>
                 <p className="mt-2 text-slate-400">
-                    Team: <span className="text-white font-medium">{assessment.team.name}</span>
+                    Équipe : <span className="text-white font-medium">{assessment.team.name}</span>
                 </p>
                 <p className="text-slate-400">
-                    Date: {new Date(assessment.date).toLocaleDateString()}
+                    Date : {new Date(assessment.date).toLocaleDateString()}
                 </p>
             </header>
 
 
             <div className="mb-12 bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
-                <h2 className="text-xl font-semibold text-white mb-4">Team Maturity Radar</h2>
-                <div className="h-72 sm:h-96 w-full">
-                    <ResponsiveContainer width="100%" height="100%" minWidth={320} minHeight={288}>
+                <h2 className="text-xl font-semibold text-white mb-4">Radar de maturité de l'équipe</h2>
+                <div className="h-96 w-full">
+                    <ResponsiveContainer width="100%" height="100%">
                         <RadarChart cx="50%" cy="50%" outerRadius="80%" data={chartData}>
                             <PolarGrid stroke="#475569" />
                             <PolarAngleAxis dataKey="subject" tick={{ fill: '#e2e8f0', fontSize: 12 }} />
@@ -139,7 +139,7 @@ const AssessmentView = () => {
                                     fillOpacity={0.1}
                                 />
                             ))}
-                            <Radar name="Team Average" dataKey="Average" stroke="#ffffff" fill="#ffffff" fillOpacity={0.0} strokeWidth={3} />
+                            <Radar name="Moyenne de l'équipe" dataKey="Average" stroke="#ffffff" fill="#ffffff" fillOpacity={0.0} strokeWidth={3} />
                             <Tooltip 
                                 contentStyle={{ backgroundColor: '#1e293b', borderColor: '#334155', color: '#f8fafc' }}
                                 itemStyle={{ color: '#818cf8' }}
@@ -157,7 +157,7 @@ const AssessmentView = () => {
                         
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-slate-300 mb-2">Maturity Level</label>
+                                <label className="block text-sm font-medium text-slate-300 mb-2">Niveau de maturité</label>
                                 <div className="space-y-2">
                                     {question.levels.map((level) => (
                                         <div key={level.value} className="flex items-start">
@@ -172,8 +172,8 @@ const AssessmentView = () => {
                                                 />
                                             </div>
                                             <div className="ml-3 text-sm">
-                                                <label htmlFor={`q${index}-l${level.value}`} className="font-medium text-white">
-                                                    Level {level.value}
+                                                    <label htmlFor={`q${index}-l${level.value}`} className="font-medium text-white">
+                                                    Niveau {level.value}
                                                 </label>
                                                 <p className="text-slate-400">{level.description}</p>
                                             </div>
@@ -183,14 +183,14 @@ const AssessmentView = () => {
                             </div>
                             
                             <div>
-                                <label htmlFor={`comment-${index}`} className="block text-sm font-medium text-slate-300">Comments</label>
+                                <label htmlFor={`comment-${index}`} className="block text-sm font-medium text-slate-300">Commentaires</label>
                                 <textarea
                                     id={`comment-${index}`}
                                     rows={3}
                                     value={answers[index]?.comment || ""}
                                     onChange={(e) => handleAnswerChange(index, "comment", e.target.value)}
                                     className="mt-1 block w-full rounded-md border-0 bg-slate-900 py-1.5 text-white shadow-sm ring-1 ring-inset ring-slate-600 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 px-3"
-                                    placeholder="Add any observations or evidence..."
+                                    placeholder="Ajoutez des observations ou des preuves..."
                                 />
                             </div>
                         </div>
@@ -203,18 +203,18 @@ const AssessmentView = () => {
                         className="w-full sm:w-auto text-sm font-semibold leading-6 text-white hover:text-indigo-300"
                         onClick={() => window.history.back()}
                     >
-                        Cancel
+                        Annuler
                     </button>
                     <button
                             type="submit"
                             className="w-full sm:w-auto rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         >
-                        Save Assessment
+                        Enregistrer l'évaluation
                     </button>
                 </div>
                 
                 {message && (
-                    <div className={`mt-4 p-4 rounded text-center ${message.includes("success") ? "bg-green-900/50 text-green-400" : "bg-red-900/50 text-red-400"}`}>
+                    <div className={`mt-4 p-4 rounded text-center ${message.includes("succès") || message.includes("réussi") ? "bg-green-900/50 text-green-400" : "bg-red-900/50 text-red-400"}`}>
                         {message}
                     </div>
                 )}

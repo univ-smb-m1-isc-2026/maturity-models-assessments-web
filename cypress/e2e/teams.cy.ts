@@ -14,8 +14,8 @@ describe('Teams Dashboard', () => {
       body: [
         {
           id: "team1",
-          name: "Development Team",
-          description: "Core dev team",
+          name: "Équipe de développement",
+          description: "Équipe cœur produit",
           owner: { id: "1", username: "testuser" },
           members: []
         }
@@ -27,18 +27,18 @@ describe('Teams Dashboard', () => {
 
   it('should display teams list', () => {
     cy.wait('@getTeams');
-    cy.contains('Development Team').should('be.visible');
+    cy.contains('Équipe de développement').should('be.visible');
   });
 
   it('should create a new team', () => {
-    cy.contains('Create New Team').click();
-    
-    cy.get('#teamName').should('be.visible').type('New QA Team');
-    
+    cy.contains('Créer une équipe').click();
+
+    cy.get('#teamName').should('be.visible').type('Nouvelle équipe QA');
+
     cy.intercept('POST', '**/api/teams', {
       statusCode: 200,
       body: {
-        message: "Team created successfully!"
+        message: "Équipe créée avec succès !"
       }
     }).as('createTeam');
 
@@ -47,14 +47,14 @@ describe('Teams Dashboard', () => {
       body: [
         {
           id: "team1",
-          name: "Development Team",
-          description: "Core dev team",
+          name: "Équipe de développement",
+          description: "Équipe cœur produit",
           owner: { id: "1", username: "testuser" },
           members: []
         },
         {
           id: "team2",
-          name: "New QA Team",
+          name: "Nouvelle équipe QA",
           description: "",
           owner: { id: "1", username: "testuser" },
           members: []
@@ -64,8 +64,8 @@ describe('Teams Dashboard', () => {
 
     cy.get('button[type="submit"]').click();
     cy.wait('@createTeam');
-    
-    cy.contains('New QA Team').should('be.visible');
+
+    cy.contains('Nouvelle équipe QA').should('be.visible');
   });
 
   it('should navigate to team details and invite member', () => {
@@ -73,7 +73,7 @@ describe('Teams Dashboard', () => {
       statusCode: 200,
       body: [{
         id: "team1",
-        name: "Development Team",
+        name: "Équipe de développement",
         owner: { id: "1", username: "testuser" },
         members: [
           { id: "1", firstName: "Test", lastName: "User", email: "test@example.com", roles: ["ROLE_PMO"] }
@@ -91,26 +91,26 @@ describe('Teams Dashboard', () => {
       body: []
     }).as('getTeamAssessments');
 
-    cy.contains('View Details').click();
+    cy.contains('Voir les détails').click();
     cy.wait('@getTeamsDetail');
-    
-    cy.contains('Development Team').should('be.visible');
-    
+
+    cy.contains('Équipe de développement').should('be.visible');
+
     cy.contains('Test User').parents('li').within(() => {
       cy.contains('PMO').should('be.visible');
-      cy.contains('Owner').should('be.visible');
+      cy.contains('Propriétaire').should('be.visible');
     });
 
-    cy.contains('Invite Member').click();
+    cy.contains('Inviter un membre').click();
     cy.get('input[type="email"]').type('newuser@example.com');
-    
+
     cy.intercept('POST', '**/api/teams/team1/invite', {
       statusCode: 200,
-      body: { message: "User added to team successfully!" }
+      body: { message: "Membre ajouté à l'équipe avec succès !" }
     }).as('inviteMember');
 
-    cy.contains('Send Invitation').click();
+    cy.contains("Envoyer l'invitation").click();
     cy.wait('@inviteMember');
-    cy.contains('User added to team successfully!').should('be.visible');
+    cy.contains("Membre ajouté à l'équipe avec succès !").should('be.visible');
   });
 });

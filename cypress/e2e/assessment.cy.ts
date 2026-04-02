@@ -14,23 +14,23 @@ describe('Assessment View', () => {
         id: "assessment1",
         team: {
           id: "team1",
-          name: "Test Team",
+          name: "Équipe de test",
           owner: { id: "2", email: "user@example.com" },
           members: []
         },
         maturityModel: {
           id: "model1",
-          name: "Scrum Maturity Model",
+          name: "Modèle de maturité Scrum",
           questions: [
             {
               id: "q1",
-              text: "Do you do daily standups?",
+              text: "Faites-vous des réunions quotidiennes ?",
               levels: [
-                { value: 1, description: "Never" },
-                { value: 2, description: "Rarely" },
-                { value: 3, description: "Sometimes" },
-                { value: 4, description: "Often" },
-                { value: 5, description: "Always" }
+                { value: 1, description: "Jamais" },
+                { value: 2, description: "Rarement" },
+                { value: 3, description: "Parfois" },
+                { value: 4, description: "Souvent" },
+                { value: 5, description: "Toujours" }
               ]
             }
           ]
@@ -45,12 +45,12 @@ describe('Assessment View', () => {
 
   it('should take assessment and submit', () => {
     cy.wait('@getAssessment');
-    cy.contains('Scrum Maturity Model').should('be.visible');
-    
-    cy.contains('Do you do daily standups?').should('be.visible');
-    
-    cy.contains('Level 5').click();
-    
+    cy.contains('Modèle de maturité Scrum').should('be.visible');
+
+    cy.contains('Faites-vous des réunions quotidiennes ?').should('be.visible');
+
+    cy.contains('Niveau 5').click();
+
     cy.intercept('PUT', '**/api/assessments/assessment1/submit', {
       statusCode: 200,
       body: {
@@ -74,23 +74,23 @@ describe('Assessment View', () => {
         id: "assessment1",
         team: {
           id: "team1",
-          name: "Test Team",
+          name: "Équipe de test",
           owner: { id: "2", email: "user@example.com" },
           members: []
         },
         maturityModel: {
           id: "model1",
-          name: "Scrum Maturity Model",
+          name: "Modèle de maturité Scrum",
           questions: [
             {
               id: "q1",
-              text: "Do you do daily standups?",
+              text: "Faites-vous des réunions quotidiennes ?",
               levels: [
-                { value: 1, description: "Never" },
-                { value: 2, description: "Rarely" },
-                { value: 3, description: "Sometimes" },
-                { value: 4, description: "Often" },
-                { value: 5, description: "Always" }
+                { value: 1, description: "Jamais" },
+                { value: 2, description: "Rarement" },
+                { value: 3, description: "Parfois" },
+                { value: 4, description: "Souvent" },
+                { value: 5, description: "Toujours" }
               ]
             }
           ]
@@ -112,8 +112,8 @@ describe('Assessment View', () => {
     cy.get('button[type="submit"]').click();
     cy.wait('@submitAssessment');
     cy.wait('@getAssessmentUpdated');
-    
-    cy.contains('Assessment submitted successfully!').should('be.visible');
+
+    cy.contains('Évaluation envoyée avec succès !').should('be.visible');
     cy.get('.recharts-responsive-container').should('exist');
   })
 })

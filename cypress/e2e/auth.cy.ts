@@ -6,7 +6,7 @@ describe('Authentication', () => {
   it('should display login form', () => {
     cy.get('input[name="email"]').should('be.visible')
     cy.get('input[name="password"]').should('be.visible')
-    cy.get('button[type="submit"]').should('contain', 'Sign in')
+    cy.get('button[type="submit"]').should('contain', 'Connexion')
   })
 
   it('should handle successful login', () => {
@@ -34,7 +34,7 @@ describe('Authentication', () => {
     cy.intercept('POST', '**/api/auth/signin', {
       statusCode: 401,
       body: {
-        message: "Bad credentials"
+        message: "Identifiants invalides"
       }
     }).as('loginError')
 
@@ -44,7 +44,7 @@ describe('Authentication', () => {
 
     cy.wait('@loginError')
     
-    cy.contains('Bad credentials').should('be.visible')
+    cy.contains('Identifiants invalides').should('be.visible')
   })
 })
 
@@ -66,7 +66,7 @@ describe('Registration', () => {
     cy.intercept('POST', '**/api/auth/signup', {
       statusCode: 200,
       body: {
-        message: "User registered successfully!"
+        message: "Inscription réussie !"
       }
     }).as('signupRequest')
 
@@ -82,7 +82,7 @@ describe('Registration', () => {
         expect(interception.request.body).to.not.have.property('roles')
     })
     
-    cy.contains('User registered successfully!').should('be.visible')
+    cy.contains('Inscription réussie !').should('be.visible')
   })
 
   it('should pre-fill email when provided in query params', () => {
@@ -106,6 +106,6 @@ describe('Registration', () => {
     cy.get('input[name="confirmPassword"]').type('password456')
     cy.get('button[type="submit"]').click()
 
-    cy.contains('Passwords do not match!').should('be.visible')
+    cy.contains('Les mots de passe ne correspondent pas !').should('be.visible')
   })
 })

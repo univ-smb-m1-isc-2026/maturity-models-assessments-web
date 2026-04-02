@@ -19,43 +19,43 @@ describe('Maturity Models Admin', () => {
 
   it('should create a new model with 5-level questions', () => {
     cy.wait('@getModels');
-    cy.contains('Create New Model').click();
-    
-    cy.get('#modelName').type('DevOps Maturity Model');
-    
-    cy.contains('Add Question').click();
-    cy.get('input[placeholder="e.g. How do you handle deployments?"]').type('How often do you deploy?');
-    
-    cy.get('input[placeholder^="Description for level"]').should('have.length', 5);
+    cy.contains('Créer un modèle').click();
 
-    cy.get('input[placeholder="Description for level 1"]').type('Once a year');
-    cy.get('input[placeholder="Description for level 2"]').type('Once a month');
-    cy.get('input[placeholder="Description for level 3"]').type('Once a week');
-    cy.get('input[placeholder="Description for level 4"]').type('Once a day');
-    cy.get('input[placeholder="Description for level 5"]').type('On every commit');
-    
+    cy.get('#modelName').type('Modèle de maturité DevOps');
+
+    cy.contains('Ajouter une question').click();
+    cy.get('input[placeholder="Par exemple : comment gérez-vous les déploiements ?"]').type('À quelle fréquence déployez-vous ?');
+
+    cy.get('input[placeholder^="Description du niveau"]').should('have.length', 5);
+
+    cy.get('input[placeholder="Description du niveau 1"]').type('Une fois par an');
+    cy.get('input[placeholder="Description du niveau 2"]').type('Une fois par mois');
+    cy.get('input[placeholder="Description du niveau 3"]').type('Une fois par semaine');
+    cy.get('input[placeholder="Description du niveau 4"]').type('Une fois par jour');
+    cy.get('input[placeholder="Description du niveau 5"]').type('À chaque commit');
+
     cy.intercept('POST', '**/api/models', {
       statusCode: 200,
       body: {
         id: "model1",
-        name: "DevOps Maturity Model",
+        name: "Modèle de maturité DevOps",
         questions: [
           {
             id: "q1",
-            text: "How often do you deploy?",
-            level1: "Once a year",
-            level2: "Once a month",
-            level3: "Once a week",
-            level4: "Once a day",
-            level5: "On every commit"
+            text: "À quelle fréquence déployez-vous ?",
+            level1: "Une fois par an",
+            level2: "Une fois par mois",
+            level3: "Une fois par semaine",
+            level4: "Une fois par jour",
+            level5: "À chaque commit"
           }
         ]
       }
     }).as('createModel');
-    
-    cy.contains('Save Model').click();
-    
+
+    cy.contains('Enregistrer le modèle').click();
+
     cy.wait('@createModel');
-    cy.contains('Model created successfully!').should('be.visible');
+    cy.contains('Modèle créé avec succès !').should('be.visible');
   });
 });

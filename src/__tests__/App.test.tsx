@@ -9,7 +9,6 @@ vi.mock('../services/auth.service');
 
 vi.mock('../components/Login', () => ({ default: () => <div>Login Component</div> }));
 vi.mock('../components/Register', () => ({ default: () => <div>Register Component</div> }));
-vi.mock('../components/Home', () => ({ default: () => <div>Home Component</div> }));
 vi.mock('../components/Profile', () => ({ default: () => <div>Profile Component</div> }));
 vi.mock('../components/Verify', () => ({ default: () => <div>Verify Component</div> }));
 vi.mock('../components/TeamsDashboard', () => ({ default: () => <div>TeamsDashboard Component</div> }));
@@ -33,11 +32,11 @@ describe('App Component', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('Maturity Assessment')).toBeInTheDocument();
-    expect(screen.getByText('Login')).toBeInTheDocument();
-    expect(screen.getByText('Sign Up')).toBeInTheDocument();
-    expect(screen.queryByText('Teams')).not.toBeInTheDocument();
-    expect(screen.queryByText('LogOut')).not.toBeInTheDocument();
+    expect(screen.getByText('MMaturity')).toBeInTheDocument();
+    expect(screen.getByText('Connexion')).toBeInTheDocument();
+    expect(screen.getByText('Créer un compte')).toBeInTheDocument();
+    expect(screen.queryByText('Équipes')).not.toBeInTheDocument();
+    expect(screen.queryByText('Déconnexion')).not.toBeInTheDocument();
   });
 
   it('renders navigation for authenticated user', () => {
@@ -50,13 +49,13 @@ describe('App Component', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('Maturity Assessment')).toBeInTheDocument();
+    expect(screen.getByText('MMaturity')).toBeInTheDocument();
     expect(screen.getByText('John Doe')).toBeInTheDocument();
-    expect(screen.getByText('Teams')).toBeInTheDocument();
-    expect(screen.getByText('LogOut')).toBeInTheDocument();
-    expect(screen.queryByText('Login')).not.toBeInTheDocument();
-    expect(screen.queryByText('Sign Up')).not.toBeInTheDocument();
-    expect(screen.queryByText('Admin Models')).not.toBeInTheDocument();
+    expect(screen.getByText('Équipes')).toBeInTheDocument();
+    expect(screen.getByText('Déconnexion')).toBeInTheDocument();
+    expect(screen.queryByText('Connexion')).not.toBeInTheDocument();
+    expect(screen.queryByText('Créer un compte')).not.toBeInTheDocument();
+    expect(screen.queryByText("Modèles d'évaluation")).not.toBeInTheDocument();
   });
 
   it('renders admin link for PMO user', () => {
@@ -69,7 +68,7 @@ describe('App Component', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('Admin Models')).toBeInTheDocument();
+    expect(screen.getByText("Modèles d'évaluation")).toBeInTheDocument();
   });
 
   it('handles logout', async () => {
@@ -83,11 +82,11 @@ describe('App Component', () => {
       </MemoryRouter>
     );
 
-    const logoutButton = screen.getByText('LogOut');
+    const logoutButton = screen.getByText('Déconnexion');
     await userEventSetup.click(logoutButton);
 
     expect(AuthService.logout).toHaveBeenCalled();
     expect(screen.queryByText('John Doe')).not.toBeInTheDocument();
-    expect(screen.getByText('Login')).toBeInTheDocument();
+    expect(screen.getByText('Connexion')).toBeInTheDocument();
   });
 });

@@ -22,17 +22,17 @@ const Profile = () => {
 
   const handleVerify2FA = () => {
     if (!currentUser) return;
-    
+
     AuthService.enable2FA(secret, verificationCode).then(
       () => {
         const updatedUser = { ...currentUser, using2FA: true };
         localStorage.setItem("user", JSON.stringify(updatedUser));
         setCurrentUser(updatedUser);
         setIs2FASetup(false);
-        setMessage("2FA Enabled successfully!");
+        setMessage("2FA activée avec succès !");
       },
       () => {
-        setMessage("Invalid code. Please try again.");
+        setMessage("Code invalide. Veuillez réessayer.");
       }
     );
   };
@@ -44,7 +44,7 @@ const Profile = () => {
       const updatedUser = { ...currentUser, using2FA: false };
       localStorage.setItem("user", JSON.stringify(updatedUser));
       setCurrentUser(updatedUser);
-      setMessage("2FA Disabled.");
+      setMessage("2FA désactivée.");
     });
   };
 
@@ -53,21 +53,21 @@ const Profile = () => {
       {currentUser ? (
         <div className="bg-slate-800 shadow overflow-hidden sm:rounded-lg">
           <div className="px-4 py-5 sm:px-6">
-            <h3 className="text-lg leading-6 font-medium text-white">Profile</h3>
-            <p className="mt-1 max-w-2xl text-sm text-slate-400">User details.</p>
+            <h3 className="text-lg leading-6 font-medium text-white">Profil</h3>
+            <p className="mt-1 max-w-2xl text-sm text-slate-400">Détails de l'utilisateur.</p>
           </div>
           <div className="border-t border-slate-700">
             <dl>
               <div className="bg-slate-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-slate-400">First Name</dt>
+                <dt className="text-sm font-medium text-slate-400">Prénom</dt>
                 <dd className="mt-1 text-sm text-white sm:mt-0 sm:col-span-2">{currentUser.firstName}</dd>
               </div>
               <div className="bg-slate-900 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-slate-400">Last Name</dt>
+                <dt className="text-sm font-medium text-slate-400">Nom</dt>
                 <dd className="mt-1 text-sm text-white sm:mt-0 sm:col-span-2">{currentUser.lastName}</dd>
               </div>
               <div className="bg-slate-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-slate-400">Email</dt>
+                <dt className="text-sm font-medium text-slate-400">E-mail</dt>
                 <dd className="mt-1 text-sm text-white sm:mt-0 sm:col-span-2">{currentUser.email}</dd>
               </div>
               <div className="bg-slate-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -83,21 +83,19 @@ const Profile = () => {
                 </dd>
               </div>
               <div className="bg-slate-900 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-slate-400">Two-Factor Authentication</dt>
+                <dt className="text-sm font-medium text-slate-400">Authentification à deux facteurs</dt>
                 <dd className="mt-1 text-sm text-white sm:mt-0 sm:col-span-2">
                   {currentUser.using2FA ? (
                     <div>
-                      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                        <span className="inline-flex items-center rounded-md bg-green-500/10 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-inset ring-green-500/20">
-                          Enabled
-                        </span>
-                        <button
-                          onClick={handleDisable2FA}
-                          className="w-full sm:w-auto rounded-md bg-red-500 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-red-400"
-                        >
-                          Disable 2FA
-                        </button>
-                      </div>
+                      <span className="inline-flex items-center rounded-md bg-green-500/10 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-inset ring-green-500/20 mr-4">
+                        Activée
+                      </span>
+                      <button
+                        onClick={handleDisable2FA}
+                        className="rounded-md bg-red-500 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-red-400"
+                      >
+                        Désactiver la 2FA
+                      </button>
                     </div>
                   ) : (
                     <div>
@@ -106,7 +104,7 @@ const Profile = () => {
                           onClick={handleInitiate2FA}
                           className="w-full sm:w-auto rounded-md bg-indigo-500 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400"
                         >
-                          Enable 2FA
+                          Activer la 2FA
                         </button>
                       ) : (
                         <div className="space-y-4">
@@ -114,27 +112,27 @@ const Profile = () => {
                             <QRCodeSVG value={qrCodeUrl} size={128} />
                           </div>
                           <p className="text-xs text-slate-400">
-                            Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)
+                            Scannez ce code QR avec votre application d'authentification (Google Authenticator, Authy, etc.)
                           </p>
                           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                             <input
                               type="text"
                               value={verificationCode}
                               onChange={(e) => setVerificationCode(e.target.value)}
-                              className="block w-full sm:w-auto rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 px-3"
-                              placeholder="Enter code"
+                              className="block rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 px-3"
+                              placeholder="Saisissez le code"
                             />
                             <button
                               onClick={handleVerify2FA}
                               className="w-full sm:w-auto rounded-md bg-green-500 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-green-400"
                             >
-                              Verify & Enable
+                              Vérifier et activer
                             </button>
                             <button
                               onClick={() => setIs2FASetup(false)}
                               className="w-full sm:w-auto rounded-md bg-slate-500 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-slate-400"
                             >
-                              Cancel
+                              Annuler
                             </button>
                           </div>
                         </div>
@@ -148,7 +146,7 @@ const Profile = () => {
           </div>
         </div>
       ) : (
-        <div>Please log in.</div>
+        <div>Veuillez vous connecter.</div>
       )}
     </div>
   );

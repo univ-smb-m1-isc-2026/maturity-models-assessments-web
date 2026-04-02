@@ -1,36 +1,24 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
-import Home from '../Home';
-import axios from 'axios';
+import { describe, it, expect, vi } from 'vitest'
+import { render, screen } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
+import App from '../../App'
+import AuthService from '../../services/auth.service'
 
-vi.mock('axios');
+vi.mock('../../services/auth.service')
 
 describe('Home Component', () => {
-  beforeEach(() => {
-    vi.resetAllMocks();
-  });
+  it('renders a normal landing page', () => {
+    ;(AuthService.getCurrentUser as any).mockReturnValue(undefined)
 
-  it('renders loading state initially', () => {
-    (axios.get as any).mockImplementation(() => new Promise(() => {}));
-    render(<Home />);
-    expect(screen.getByText(/Chargement.../i)).toBeInTheDocument();
-  });
+    render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>
+    )
 
-  it('renders success message from backend', async () => {
-    (axios.get as any).mockResolvedValue({ data: { message: 'Hello from API' } });
-    render(<Home />);
-    
-    await waitFor(() => {
-        expect(screen.getByText('Hello from API')).toBeInTheDocument();
-    });
-  });
-
-  it('renders error message when backend fails', async () => {
-    (axios.get as any).mockRejectedValue(new Error('Network Error'));
-    render(<Home />);
-    
-    await waitFor(() => {
-        expect(screen.getByText(/Impossible de connecter au serveur backend/i)).toBeInTheDocument();
-    });
+    expect(screen.getByText(/Pilotez la maturité de vos équipes/i)).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Créer un compte/i })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Se connecter/i })).toBeInTheDocument()
+    expect(screen.queryByText(/API/i)).not.toBeInTheDocument()
   });
 });

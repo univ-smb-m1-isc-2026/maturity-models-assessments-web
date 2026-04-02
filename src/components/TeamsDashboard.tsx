@@ -42,7 +42,7 @@ const TeamsDashboard = () => {
         setMessage("");
 
         if (!canCreateTeam) {
-            setMessage("You cannot create a team with your current profile. You must be invited to an existing team.");
+            setMessage("Vous ne pouvez pas créer d'équipe avec votre profil actuel.");
             return;
         }
 
@@ -50,7 +50,7 @@ const TeamsDashboard = () => {
 
         TeamService.createTeam(newTeamName).then(
             () => {
-                setMessage("Team created successfully!");
+                setMessage("Équipe créée avec succès !");
                 setNewTeamName("");
                 loadTeams();
             },
@@ -70,16 +70,16 @@ const TeamsDashboard = () => {
     return (
         <div className="min-h-full py-10 px-4 sm:px-6 lg:px-8 text-white">
             <header className="mb-8">
-                <h1 className="text-3xl font-bold tracking-tight text-white">My Teams</h1>
+                <h1 className="text-3xl font-bold tracking-tight text-white">Mes équipes</h1>
             </header>
 
-            <div className={`grid grid-cols-1 gap-8 ${canCreateTeam ? "md:grid-cols-2" : "md:grid-cols-1"}`}>
+            <div className={canCreateTeam ? "grid grid-cols-1 gap-8 md:grid-cols-2" : "grid grid-cols-1 gap-8"}>
                 {canCreateTeam && (
                     <div className="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
-                        <h2 className="text-xl font-semibold mb-4 text-indigo-400">Create New Team</h2>
+                        <h2 className="text-xl font-semibold mb-4 text-indigo-400">Créer une équipe</h2>
                         <form onSubmit={handleCreateTeam} className="space-y-4">
                             <div>
-                                <label htmlFor="teamName" className="block text-sm font-medium text-slate-300">Team Name</label>
+                                <label htmlFor="teamName" className="block text-sm font-medium text-slate-300">Nom de l'équipe</label>
                                 <input
                                     type="text"
                                     id="teamName"
@@ -93,7 +93,7 @@ const TeamsDashboard = () => {
                                 type="submit"
                                 className="w-full rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                             >
-                                Create New Team
+                                Créer l'équipe
                             </button>
                         </form>
                         {message && (
@@ -104,35 +104,26 @@ const TeamsDashboard = () => {
                     </div>
                 )}
 
-                {!canCreateTeam && (
-                    <div className="bg-amber-500/10 border border-amber-500/30 p-6 rounded-lg shadow-md">
-                        <h2 className="text-xl font-semibold mb-2 text-amber-300">Waiting for invitation</h2>
-                        <p className="text-amber-100 text-sm">
-                            You cannot create a team with your current profile. You will be able to work as soon as a Team Leader or PMO invites you.
-                        </p>
-                    </div>
-                )}
-
                 <div className="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
-                    <h2 className="text-xl font-semibold mb-4 text-indigo-400">Your Teams</h2>
+                    <h2 className="text-xl font-semibold mb-4 text-indigo-400">Vos équipes</h2>
                     {loading ? (
-                        <p className="text-slate-400">Loading teams...</p>
+                        <p className="text-slate-400">Chargement des équipes...</p>
                     ) : (
                         <ul className="divide-y divide-slate-700">
                             {teams.length === 0 ? (
-                                <p className="text-slate-400">You are not a member of any team yet.</p>
+                                <p className="text-slate-400">Vous ne faites encore partie d'aucune équipe.</p>
                             ) : (
                                 teams.map((team) => (
                                     <li key={team.id} className="py-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                                         <div>
                                             <p className="text-lg font-medium text-white">{team.name}</p>
-                                            <p className="text-sm text-slate-400">Members: {team.members.length}</p>
+                                            <p className="text-sm text-slate-400">Membres : {team.members.length}</p>
                                         </div>
                                         <Link
                                             to={`/teams/${team.id}`}
                                             className="text-indigo-400 hover:text-indigo-300 text-sm font-medium"
                                         >
-                                            View Details
+                                            Voir les détails
                                         </Link>
                                     </li>
                                 ))

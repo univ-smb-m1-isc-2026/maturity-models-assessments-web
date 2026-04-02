@@ -40,7 +40,7 @@ const Verify = () => {
       }
     );
   };
-  
+
   const handleResend = () => {
     if (!email) return;
     setResending(true);
@@ -71,10 +71,10 @@ const Verify = () => {
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-white">
-          Account Verification
+          Vérification du compte
         </h2>
         <p className="mt-2 text-center text-sm text-gray-400">
-            Please enter the 6-digit code sent to your email.
+            Saisissez le code à 6 chiffres envoyé à votre adresse e-mail.
         </p>
       </div>
 
@@ -83,7 +83,7 @@ const Verify = () => {
             <form className="space-y-6" onSubmit={handleVerify}>
             <div>
                 <label htmlFor="email" className="block text-sm font-medium leading-6 text-white">
-                Email
+                E-mail
                 </label>
                 <div className="mt-2">
                 <input
@@ -100,7 +100,7 @@ const Verify = () => {
 
             <div>
                 <label htmlFor="code" className="block text-sm font-medium leading-6 text-white">
-                Verification Code
+                Code de vérification
                 </label>
                 <div className="mt-2">
                 <input
@@ -122,7 +122,7 @@ const Verify = () => {
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
                 >
-                Verify Account
+                Vérifier le compte
                 </button>
             </div>
 
@@ -133,7 +133,7 @@ const Verify = () => {
                   disabled={resending || !email}
                   className="flex w-full justify-center rounded-md bg-white/10 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-white/15 disabled:opacity-50"
                 >
-                  {resending ? "Resending..." : "Resend code"}
+                  {resending ? "Nouvel envoi..." : "Renvoyer le code"}
                 </button>
             </div>
 
@@ -151,7 +151,7 @@ const Verify = () => {
             <div className="rounded-md bg-green-900/50 p-4 text-green-400 text-center">
                 <h3 className="text-sm font-medium mb-4">{message}</h3>
                 <Link to="/login" className="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-400 transition-colors">
-                    Go to Login
+                    Aller à la connexion
                 </Link>
             </div>
         )}

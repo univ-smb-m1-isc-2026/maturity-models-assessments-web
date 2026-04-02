@@ -14,8 +14,8 @@ describe('Navigation and Permissions', () => {
         cy.intercept('GET', '**/api/models', {
           statusCode: 200,
           body: [
-            { id: "model1", name: "DevOps Maturity", questions: [] },
-            { id: "model2", name: "Agile Maturity", questions: [] }
+            { id: "model1", name: "Maturité DevOps", questions: [] },
+            { id: "model2", name: "Maturité Agile", questions: [] }
           ]
         }).as('getModels');
 
@@ -23,13 +23,13 @@ describe('Navigation and Permissions', () => {
       });
 
       it('should see Admin Models link', () => {
-        cy.get('nav').contains('Admin Models').should('be.visible');
+        cy.get('nav').contains('Modèles d\'évaluation').should('be.visible');
       });
 
       it('should be able to navigate to Admin Models', () => {
-        cy.get('nav').contains('Admin Models').click();
+        cy.get('nav').contains('Modèles d\'évaluation').click();
         cy.url().should('include', '/admin/models');
-        cy.contains('Maturity Models').should('be.visible');
+        cy.contains('Modèles de maturité').should('be.visible');
       });
   });
 
@@ -47,11 +47,11 @@ describe('Navigation and Permissions', () => {
     });
 
     it('should NOT see Admin Models link', () => {
-      cy.get('nav').contains('Admin Models').should('not.exist');
+      cy.get('nav').contains('Modèles d\'évaluation').should('not.exist');
     });
 
     it('should see Teams link', () => {
-      cy.get('nav').contains('Teams').should('be.visible');
+      cy.get('nav').contains('Équipes').should('be.visible');
     });
   });
 
@@ -61,10 +61,10 @@ describe('Navigation and Permissions', () => {
         cy.visit('/');
     });
 
-    it('should verify protected routes redirect to login', () => {
-       cy.get('nav').contains('Teams').should('not.exist');
-       cy.get('nav').contains('Admin Models').should('not.exist');
-       cy.get('nav').contains('Login').should('be.visible');
+     it('should verify protected routes redirect to login', () => {
+       cy.get('nav').contains('Équipes').should('not.exist');
+       cy.get('nav').contains('Modèles d\'évaluation').should('not.exist');
+       cy.get('nav').contains('Connexion').should('be.visible');
     });
   });
 

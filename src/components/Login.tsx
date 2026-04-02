@@ -33,10 +33,10 @@ const Login = () => {
           error.toString();
 
         setLoading(false);
-        
+
         if (error.response && error.response.status === 403 && resMessage === "2FA_REQUIRED") {
              setShow2FAInput(true);
-             setMessage("Two-Factor Authentication required. Please enter your code.");
+             setMessage("Authentification à deux facteurs requise. Saisissez votre code.");
         } else if (error.response && error.response.status === 403 && resMessage === "EMAIL_NOT_VERIFIED") {
              navigate("/verify", { state: { email } });
         } else {
@@ -50,7 +50,7 @@ const Login = () => {
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-white">
-          Sign in to your account
+          Connectez-vous à votre compte
         </h2>
       </div>
 
@@ -58,7 +58,7 @@ const Login = () => {
         <form className="space-y-6" onSubmit={handleLogin}>
           <div>
             <label htmlFor="email" className="block text-sm font-medium leading-6 text-white">
-              Email
+              E-mail
             </label>
             <div className="mt-2">
               <input
@@ -76,7 +76,7 @@ const Login = () => {
           <div>
             <div className="flex items-center justify-between">
               <label htmlFor="password" className="block text-sm font-medium leading-6 text-white">
-                Password
+                Mot de passe
               </label>
             </div>
             <div className="mt-2">
@@ -95,7 +95,7 @@ const Login = () => {
           {show2FAInput && (
             <div>
               <label htmlFor="code" className="block text-sm font-medium leading-6 text-white">
-                2FA Code
+                Code 2FA
               </label>
               <div className="mt-2">
                 <input
@@ -106,7 +106,7 @@ const Login = () => {
                   className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 px-3"
                   value={code}
                   onChange={(e) => setCode(e.target.value)}
-                  placeholder="Enter 6-digit code"
+                  placeholder="Saisissez le code à 6 chiffres"
                 />
               </div>
             </div>
@@ -119,7 +119,7 @@ const Login = () => {
               className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 disabled:opacity-50"
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Sign in
+              Connexion
             </button>
           </div>
 

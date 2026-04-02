@@ -4,8 +4,8 @@ import AuthService from "../services/auth.service";
 
 const ROLE_OPTIONS = [
   { value: "ROLE_PMO", label: "PMO" },
-  { value: "ROLE_TEAM_LEADER", label: "Team Leader" },
-  { value: "ROLE_TEAM_MEMBER", label: "Team Member" },
+  { value: "ROLE_TEAM_LEADER", label: "Chef d'équipe" },
+  { value: "ROLE_TEAM_MEMBER", label: "Membre" },
 ];
 
 const Register = () => {
@@ -28,7 +28,7 @@ const Register = () => {
     setSuccessful(false);
 
     if (password !== confirmPassword) {
-      setMessage("Passwords do not match!");
+      setMessage("Les mots de passe ne correspondent pas !");
       setSuccessful(false);
       return;
     }
@@ -61,7 +61,7 @@ const Register = () => {
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-white">
-          Create an account
+          Créer un compte
         </h2>
       </div>
 
@@ -71,7 +71,7 @@ const Register = () => {
             <>
               <div>
                 <label htmlFor="firstName" className="block text-sm font-medium leading-6 text-white">
-                  First Name
+                  Prénom
                 </label>
                 <div className="mt-2">
                   <input
@@ -88,7 +88,7 @@ const Register = () => {
 
               <div>
                 <label htmlFor="lastName" className="block text-sm font-medium leading-6 text-white">
-                  Last Name
+                  Nom
                 </label>
                 <div className="mt-2">
                   <input
@@ -105,7 +105,7 @@ const Register = () => {
 
               <div>
                 <label htmlFor="email" className="block text-sm font-medium leading-6 text-white">
-                  Email
+                  E-mail
                 </label>
                 <div className="mt-2">
                   <input
@@ -120,11 +120,9 @@ const Register = () => {
                 </div>
               </div>
 
- 
-
               <div>
                 <label htmlFor="password" className="block text-sm font-medium leading-6 text-white">
-                  Password
+                  Mot de passe
                 </label>
                 <div className="mt-2">
                   <input
@@ -141,7 +139,7 @@ const Register = () => {
 
               <div>
                 <label htmlFor="confirmPassword" className="block text-sm font-medium leading-6 text-white">
-                  Confirm Password
+                  Confirmer le mot de passe
                 </label>
                 <div className="mt-2">
                   <input
@@ -158,9 +156,9 @@ const Register = () => {
 
               {!teamIdParam && (
                 <fieldset>
-                  <legend className="block text-sm font-medium leading-6 text-white">Select your role</legend>
+                  <legend className="block text-sm font-medium leading-6 text-white">Sélectionnez votre rôle</legend>
                   <p className="mt-1 text-xs text-slate-400">
-                    This role is used for your personal profile. Team roles can still be adjusted later by a team owner.
+                    Ce rôle est utilisé pour votre profil personnel. Les rôles d'équipe pourront être modifiés plus tard par un propriétaire d'équipe.
                   </p>
                   <div className="mt-3 space-y-3">
                     {ROLE_OPTIONS.map((role) => (
@@ -185,7 +183,7 @@ const Register = () => {
 
               {teamIdParam && (
                 <div className="rounded-md border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
-                  You are registering through an invitation. Your team role will be set by the invitation flow.
+                  Vous vous inscrivez via une invitation. Votre rôle d'équipe sera défini par le processus d'invitation.
                 </div>
               )}
 
@@ -194,7 +192,7 @@ const Register = () => {
                   type="submit"
                   className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
                 >
-                  Sign up
+                  S'inscrire
                 </button>
               </div>
             </>

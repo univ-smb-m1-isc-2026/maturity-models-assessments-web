@@ -103,16 +103,30 @@ const TeamInvitations = () => {
     return inv.inviterUserId;
   };
 
+  const statusLabel = (status: Invitation["status"]) => {
+    switch (status) {
+      case "PENDING":
+        return "En attente";
+      case "ACCEPTED":
+        return "Acceptée";
+      case "REVOKED":
+        return "Révoquée";
+      case "EXPIRED":
+        return "Expirée";
+      default:
+        return status;
+    }
+  };
+
   return (
-    <div className="min-h-full py-10 px-4 sm:px-6 lg:px-8 text-white">
-      <div className="mx-auto max-w-5xl">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-6">
-        <h1 className="text-2xl font-semibold text-indigo-400">Team Invitations</h1>
-        <Link to={`/teams/${id}`} className="text-sm text-slate-300 hover:text-white">Back to Team</Link>
+    <div className="max-w-5xl mx-auto p-6">
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-semibold text-indigo-400">Invitations de l'équipe</h1>
+        <Link to={`/teams/${id}`} className="text-sm text-slate-300 hover:text-white">Retour à l'équipe</Link>
       </div>
 
       {loading ? (
-        <div className="rounded-md p-4 bg-blue-900/30 border border-blue-800">Loading invitations...</div>
+        <div className="rounded-md p-4 bg-blue-900/30 border border-blue-800">Chargement des invitations...</div>
       ) : message ? (
         <div className="rounded-md p-4 bg-red-900/30 border border-red-800">{message}</div>
       ) : (
@@ -121,14 +135,14 @@ const TeamInvitations = () => {
           <table className="min-w-[900px] divide-y divide-slate-700 whitespace-nowrap">
             <thead>
               <tr>
-                <th className="px-4 py-2 text-left text-xs font-medium text-slate-400">Invitee</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-slate-400">Inviter</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-slate-400">Status</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-slate-400">Created At</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-slate-400">Last Sent</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-slate-400">Expires At</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-slate-400">Accepted At</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-slate-400">Revoked At</th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-slate-400">Invité</th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-slate-400">Invitant</th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-slate-400">Statut</th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-slate-400">Créée le</th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-slate-400">Dernier envoi</th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-slate-400">Expire le</th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-slate-400">Acceptée le</th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-slate-400">Révoquée le</th>
                 <th className="px-4 py-2 text-left text-xs font-medium text-slate-400">Actions</th>
               </tr>
             </thead>
@@ -144,7 +158,7 @@ const TeamInvitations = () => {
                       inv.status === "REVOKED" ? "bg-red-900/50 text-red-300" :
                       "bg-slate-700/60 text-slate-200"
                     }`}>
-                      {inv.status}
+                      {statusLabel(inv.status)}
                     </span>
                   </td>
                   <td className="px-4 py-2 text-sm">{formatDate(inv.createdAt)}</td>
@@ -161,14 +175,14 @@ const TeamInvitations = () => {
                             onClick={() => handleResend(inv.id)}
                             className="text-xs text-indigo-300 hover:text-indigo-200"
                           >
-                            Resend
+                            Renvoyer
                           </button>
                           <button
                             type="button"
                             onClick={() => handleRevoke(inv.id)}
                             className="text-xs text-red-300 hover:text-red-200"
                           >
-                            Revoke
+                            Révoquer
                           </button>
                         </>
                       )}
@@ -180,24 +194,23 @@ const TeamInvitations = () => {
               ))}
               {invitations.length === 0 && (
                 <tr>
-                  <td colSpan={9} className="px-4 py-8 text-center text-sm text-slate-400">No invitations yet.</td>
+                  <td colSpan={9} className="px-4 py-8 text-center text-sm text-slate-400">Aucune invitation pour le moment.</td>
                 </tr>
               )}
             </tbody>
           </table>
           </div>
           <div className="mt-4 text-xs text-slate-400">
-            Only Owner, PMO, or Team Leader can view this log.
+            Seul le propriétaire, le PMO ou le chef d'équipe peut consulter ce journal.
           </div>
           {currentUser && (
             <div className="mt-2 text-xs text-slate-500">
-              Logged as {currentUser.email}
+              Connecté en tant que {currentUser.email}
             </div>
           )}
         </div>
       )}
       </div>
-    </div>
   );
 };
 

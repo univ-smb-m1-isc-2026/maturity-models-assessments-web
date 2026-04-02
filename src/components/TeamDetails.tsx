@@ -42,7 +42,7 @@ const TeamDetails = () => {
                 setLoading(false);
             },
             () => {
-                setMessage("Error loading team.");
+                setMessage("Erreur lors du chargement de l'équipe.");
                 setLoading(false);
             }
         );
@@ -126,7 +126,7 @@ const TeamDetails = () => {
         if (id && selectedModelId) {
             AssessmentService.startAssessment(id, selectedModelId).then(
                 () => {
-                    setAssessmentMessage("Assessment started successfully!");
+                    setAssessmentMessage("Évaluation lancée avec succès !");
                     loadAssessments();
                 },
                 (error) => {
@@ -182,7 +182,7 @@ const TeamDetails = () => {
 
             MaturityModelService.createModel(newModel).then(
                 () => {
-                    setCreateModelMessage("Model created successfully!");
+                    setCreateModelMessage("Modèle créé avec succès !");
                     setNewModelName("");
                     setNewQuestions([]);
                     setIsCreatingModel(false);
@@ -199,18 +199,18 @@ const TeamDetails = () => {
                 }
             );
         } else if (newQuestions.length === 0) {
-            setCreateModelMessage("Please add at least one question.");
+            setCreateModelMessage("Veuillez ajouter au moins une question.");
         }
     };
 
     const addQuestion = () => {
         if (currentQuestionText.trim()) {
             const levels = [
-                { value: 1, description: "Initial" },
-                { value: 2, description: "Managed" },
-                { value: 3, description: "Defined" },
-                { value: 4, description: "Quantitatively Managed" },
-                { value: 5, description: "Optimizing" }
+                { value: 1, description: "Initiale" },
+                { value: 2, description: "Maîtrisé" },
+                { value: 3, description: "Défini" },
+                { value: 4, description: "Gestion quantitative" },
+                { value: 5, description: "Optimisation" }
             ];
             setNewQuestions([...newQuestions, { text: currentQuestionText, levels }]);
             setCurrentQuestionText("");
@@ -241,7 +241,7 @@ const TeamDetails = () => {
         setEditModelMessage("");
         MaturityModelService.updateModel(editingModel.id, editingModel).then(
             () => {
-                setEditModelMessage("Model updated successfully!");
+                setEditModelMessage("Modèle mis à jour avec succès !");
                 setEditingModel(null);
                 loadModels();
             },
@@ -292,11 +292,11 @@ const TeamDetails = () => {
     };
 
     if (loading) {
-        return <div className="text-white text-center mt-10">Loading team details...</div>;
+        return <div className="text-white text-center mt-10">Chargement des détails de l'équipe...</div>;
     }
 
     if (!team) {
-        return <div className="text-white text-center mt-10">Team not found.</div>;
+        return <div className="text-white text-center mt-10">Équipe introuvable.</div>;
     }
 
     const currentUserId = currentUser?.id;
@@ -319,28 +319,28 @@ const TeamDetails = () => {
         <div className="min-h-full py-10 px-4 sm:px-6 lg:px-8 text-white">
              <div className="mb-6">
                 <Link to="/teams" className="text-indigo-400 hover:text-indigo-300">
-                    &larr; Back to Dashboard
+                    &larr; Retour au tableau de bord
                 </Link>
             </div>
 
             <header className="mb-8 border-b border-slate-700 pb-4">
                 <h1 className="text-3xl font-bold tracking-tight text-white">{team.name}</h1>
-                <p className="mt-2 text-slate-400">Led by: <span className="text-white font-medium">
+                <p className="mt-2 text-slate-400">Dirigée par : <span className="text-white font-medium">
                     {team.owner.firstName && team.owner.lastName 
                         ? `${team.owner.firstName} ${team.owner.lastName}` 
-                        : (team.owner.email || "Unknown")}
+                        : (team.owner.email || "Inconnu")}
                 </span></p>
             </header>
 
             {isProfileMemberOnly && (
                 <div className="mb-6 rounded-md border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
-                    Your profile is Team Member. You can view team information, but management actions are disabled.
+                    Votre profil est limité à Membre. Vous pouvez consulter les informations de l'équipe, mais les actions de gestion sont désactivées.
                 </div>
             )}
 
             <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
                 <div className="md:col-span-2 bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
-                    <h2 className="text-xl font-semibold mb-4 text-indigo-400">Team Members ({team.members.length})</h2>
+                    <h2 className="text-xl font-semibold mb-4 text-indigo-400">Membres de l'équipe ({team.members.length})</h2>
                     <ul className="divide-y divide-slate-700">
                         {team.members.map((member) => (
                             <li key={member.id} className="py-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -358,13 +358,13 @@ const TeamDetails = () => {
                                     <div className="flex gap-1 mt-1">
                                         {(member.roles && member.roles.length > 0 ? member.roles : ["ROLE_TEAM_MEMBER"]).map(role => (
                                             <span key={role} className="text-[10px] px-1.5 py-0.5 rounded bg-slate-700 text-slate-300">
-                                                {role.replace('ROLE_', '').replace('_', ' ')}
+                                                {role === 'ROLE_PMO' ? 'PMO' : role === 'ROLE_TEAM_LEADER' ? "Chef d'équipe" : role === 'ROLE_TEAM_MEMBER' ? 'Membre' : role}
                                             </span>
                                         ))}
                                     </div>
                                     {editingMember === member.id && (
                                         <div className="mt-2 p-2 bg-slate-900 rounded border border-slate-700">
-                                            <p className="text-xs text-slate-400 mb-2">Select Roles:</p>
+                                            <p className="text-xs text-slate-400 mb-2">Sélectionnez les rôles :</p>
                                             <div className="flex flex-wrap gap-2 mb-2">
                                                 {['pmo', 'leader', 'user'].map(role => (
                                                     <label key={role} className="flex items-center space-x-1 text-xs text-slate-300 cursor-pointer">
@@ -374,7 +374,7 @@ const TeamDetails = () => {
                                                             onChange={() => toggleRole(role)}
                                                             className="rounded border-slate-600 bg-slate-800 text-indigo-600 focus:ring-indigo-500"
                                                         />
-                                                        <span>{role === 'user' ? 'Member' : role.toUpperCase()}</span>
+                                                        <span>{role === 'user' ? 'Membre' : role === 'leader' ? "Chef d'équipe" : 'PMO'}</span>
                                                     </label>
                                                 ))}
                                             </div>
@@ -383,13 +383,13 @@ const TeamDetails = () => {
                                                     onClick={() => member.id && handleUpdateRoles(member.id)}
                                                     className="px-2 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-500"
                                                 >
-                                                    Save
+                                                    Enregistrer
                                                 </button>
                                                 <button 
                                                     onClick={() => setEditingMember(null)}
                                                     className="px-2 py-1 text-xs bg-slate-600 text-white rounded hover:bg-slate-500"
                                                 >
-                                                    Cancel
+                                                    Annuler
                                                 </button>
                                             </div>
                                         </div>
@@ -411,12 +411,12 @@ const TeamDetails = () => {
                                         }}
                                         className="text-xs text-indigo-400 hover:text-indigo-300"
                                     >
-                                        Edit Roles
+                                        Modifier les rôles
                                     </button>
                                 )}
                                 {member.id === team.owner.id && (
                                     <span className="inline-flex items-center rounded-md bg-yellow-400/10 px-2 py-1 text-xs font-medium text-yellow-500 ring-1 ring-inset ring-yellow-400/20">
-                                        Owner
+                                        Propriétaire
                                     </span>
                                 )}
                             </div>
@@ -428,17 +428,17 @@ const TeamDetails = () => {
                 <div className="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700 h-fit">
                     {canInviteMembers ? (
                         <>
-                            <h2 className="text-xl font-semibold mb-4 text-indigo-400">Invite Member</h2>
+                            <h2 className="text-xl font-semibold mb-4 text-indigo-400">Inviter un membre</h2>
                             <form onSubmit={handleInvite} className="space-y-4">
                                 <div>
-                                    <label htmlFor="email" className="block text-sm font-medium text-slate-300">Email Address</label>
+                                    <label htmlFor="email" className="block text-sm font-medium text-slate-300">Adresse e-mail</label>
                                     <input
                                         type="email"
                                         id="email"
                                         value={inviteEmail}
                                         onChange={(e) => setInviteEmail(e.target.value)}
                                         className="mt-1 block w-full rounded-md border-0 bg-slate-900 py-1.5 text-white shadow-sm ring-1 ring-inset ring-slate-600 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 px-3"
-                                        placeholder="colleague@example.com"
+                                        placeholder="collegue@exemple.com"
                                         required
                                     />
                                 </div>
@@ -446,23 +446,23 @@ const TeamDetails = () => {
                                     type="submit"
                                     className="w-full rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                 >
-                                    Send Invitation
+                                    Envoyer l'invitation
                                 </button>
                             </form>
                             {message && (
-                                <div className={`mt-4 p-2 rounded text-sm ${message.includes("success") ? "bg-green-900/50 text-green-400" : "bg-red-900/50 text-red-400"}`}>
+                                <div className={`mt-4 p-2 rounded text-sm ${message.toLowerCase().includes("succès") || message.toLowerCase().includes("réussi") ? "bg-green-900/50 text-green-400" : "bg-red-900/50 text-red-400"}`}>
                                     {message}
                                 </div>
                             )}
                             <div className="mt-4">
                                 <Link to={`/teams/${id}/invitations`} className="text-xs text-indigo-400 hover:text-indigo-300">
-                                    View Invitations Log
+                                    Voir le journal des invitations
                                 </Link>
                             </div>
                         </>
                     ) : (
-                         <div className="text-slate-400 text-sm">
-                            Only the team owner, a team leader, or a PMO can invite new members.
+                                 <div className="text-slate-400 text-sm">
+                                     Seul le propriétaire de l'équipe, un chef d'équipe ou un PMO peut inviter de nouveaux membres.
                          </div>
                     )}
                 </div>
@@ -470,9 +470,9 @@ const TeamDetails = () => {
 
             <div className="mt-8 grid grid-cols-1 gap-8 md:grid-cols-3">
                 <div className="md:col-span-2 bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
-                     <h2 className="text-xl font-semibold mb-4 text-indigo-400">Assessments</h2>
+                     <h2 className="text-xl font-semibold mb-4 text-indigo-400">Évaluations</h2>
                      {assessments.length === 0 ? (
-                        <p className="text-slate-400">No assessments yet.</p>
+                        <p className="text-slate-400">Aucune évaluation pour le moment.</p>
                      ) : (
                         <ul className="divide-y divide-slate-700">
                             {assessments.map((assessment) => (
@@ -487,7 +487,7 @@ const TeamDetails = () => {
                                         to={`/assessments/${assessment.id}`}
                                         className="text-sm text-indigo-400 hover:text-indigo-300"
                                     >
-                                        View / Continue
+                                        Voir / reprendre
                                     </Link>
                                 </li>
                             ))}
@@ -498,13 +498,13 @@ const TeamDetails = () => {
 
                 {canManageModels && (
                     <div className="md:col-span-2 bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
-                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
-                            <h2 className="text-xl font-semibold text-indigo-400">Team Maturity Models</h2>
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-xl font-semibold text-indigo-400">Modèles de maturité de l'équipe</h2>
                             <button
                                 onClick={() => setIsCreatingModel(!isCreatingModel)}
                                 className="w-full sm:w-auto px-3 py-2 bg-indigo-600 text-white text-sm rounded hover:bg-indigo-500"
                             >
-                                {isCreatingModel ? "Cancel" : "Create Model"}
+                                {isCreatingModel ? "Annuler" : "Créer un modèle"}
                             </button>
                         </div>
                         
@@ -516,14 +516,14 @@ const TeamDetails = () => {
 
                         {isCreatingModel && (
                             <form onSubmit={handleCreateModel} className="mb-6 p-4 bg-slate-900 rounded border border-slate-700">
-                                <label className="block text-sm font-medium text-slate-300 mb-2">Model Name</label>
+                                <label className="block text-sm font-medium text-slate-300 mb-2">Nom du modèle</label>
                                 <div className="flex gap-2">
                                     <input
                                         type="text"
                                         value={newModelName}
                                         onChange={(e) => setNewModelName(e.target.value)}
                                         className="flex-1 rounded-md border-0 bg-slate-800 py-1.5 text-white shadow-sm ring-1 ring-inset ring-slate-600 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 px-3"
-                                        placeholder="e.g. DevOps Maturity Model"
+                                        placeholder="Par exemple : modèle de maturité DevOps"
                                         required
                                     />
                                 </div>
@@ -536,14 +536,14 @@ const TeamDetails = () => {
                                             value={currentQuestionText}
                                             onChange={(e) => setCurrentQuestionText(e.target.value)}
                                             className="flex-1 rounded-md border-0 bg-slate-800 py-1.5 text-white shadow-sm ring-1 ring-inset ring-slate-600 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 px-3"
-                                            placeholder="Enter question text..."
+                                            placeholder="Saisissez le texte de la question..."
                                         />
                                         <button
                                             type="button"
                                             onClick={addQuestion}
                                             className="w-full sm:w-auto px-3 py-2 bg-slate-700 text-white text-sm rounded hover:bg-slate-600"
                                         >
-                                            Add
+                                            Ajouter
                                         </button>
                                     </div>
                                     
@@ -558,7 +558,7 @@ const TeamDetails = () => {
                                                             onClick={() => removeQuestion(idx)}
                                                                 className="text-red-400 hover:text-red-300 text-xs sm:ml-2"
                                                         >
-                                                            Remove
+                                                            Supprimer
                                                         </button>
                                                     </div>
                                                     <div className="space-y-1 pl-2 border-l-2 border-slate-700">
@@ -570,7 +570,7 @@ const TeamDetails = () => {
                                                                     value={level.description}
                                                                     onChange={(e) => handleLevelChange(idx, lIdx, e.target.value)}
                                                                     className="flex-1 text-xs bg-slate-900 border border-slate-700 rounded px-2 py-1 text-slate-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
-                                                                    placeholder={`Level ${level.value} description`}
+                                                                    placeholder={`Description du niveau ${level.value}`}
                                                                 />
                                                             </div>
                                                         ))}
@@ -585,7 +585,7 @@ const TeamDetails = () => {
                                     type="submit"
                                     className="mt-4 w-full rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
                                 >
-                                    Create Model
+                                    Créer le modèle
                                 </button>
                             </form>
                         )}
@@ -602,37 +602,37 @@ const TeamDetails = () => {
                                             onClick={() => handleEditModel(model)}
                                             className="text-xs text-indigo-400 hover:text-indigo-300 font-medium"
                                         >
-                                            Edit
+                                            Modifier
                                         </button>
                                     </div>
                                 </li>
                             ))}
                             {availableModels.length === 0 && (
-                                <li className="py-3 text-slate-400 text-sm">No models defined for this team.</li>
+                                <li className="py-3 text-slate-400 text-sm">Aucun modèle n'est défini pour cette équipe.</li>
                             )}
                         </ul>
 
                         {editingModel && (
                             <form onSubmit={handleSaveEditModel} className="mt-6 p-4 bg-slate-900 rounded border border-indigo-700">
-                                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
-                                    <h3 className="text-base font-semibold text-indigo-300">Editing: {editingModel.name}</h3>
+                                <div className="flex justify-between items-center mb-4">
+                                    <h3 className="text-base font-semibold text-indigo-300">Modification : {editingModel.name}</h3>
                                     <button
                                         type="button"
                                         onClick={() => setEditingModel(null)}
                                         className="text-xs text-slate-400 hover:text-slate-200"
                                     >
-                                        ✕ Cancel
+                                        ✕ Annuler
                                     </button>
                                 </div>
 
                                 {editModelMessage && (
-                                    <div className={`mb-3 p-2 rounded text-sm ${editModelMessage.includes("success") ? "bg-green-900/50 text-green-400" : "bg-red-900/50 text-red-400"}`}>
+                                    <div className={`mb-3 p-2 rounded text-sm ${editModelMessage.toLowerCase().includes("succès") || editModelMessage.toLowerCase().includes("réussi") ? "bg-green-900/50 text-green-400" : "bg-red-900/50 text-red-400"}`}>
                                         {editModelMessage}
                                     </div>
                                 )}
 
                                 <div className="mb-4">
-                                    <label htmlFor="editModelName" className="block text-sm font-medium text-slate-300 mb-1">Model Name</label>
+                                    <label htmlFor="editModelName" className="block text-sm font-medium text-slate-300 mb-1">Nom du modèle</label>
                                     <input
                                         id="editModelName"
                                         type="text"
@@ -651,7 +651,7 @@ const TeamDetails = () => {
                                             onClick={addEditQuestion}
                                             className="w-full sm:w-auto text-xs px-2 py-2 bg-slate-700 text-white rounded hover:bg-slate-600"
                                         >
-                                            + Add Question
+                                            + Ajouter une question
                                         </button>
                                     </div>
                                     <ul className="space-y-3 max-h-80 overflow-y-auto">
@@ -662,8 +662,8 @@ const TeamDetails = () => {
                                                         type="text"
                                                         value={q.text}
                                                         onChange={(e) => handleEditQuestionChange(qIdx, e.target.value)}
-                                                        className="flex-1 text-sm bg-slate-900 border border-slate-700 rounded px-2 py-2 text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 sm:mr-2"
-                                                        placeholder="Question text..."
+                                                        className="flex-1 text-sm bg-slate-900 border border-slate-700 rounded px-2 py-1 text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 mr-2"
+                                                        placeholder="Texte de la question..."
                                                         required
                                                     />
                                                     <button
@@ -671,7 +671,7 @@ const TeamDetails = () => {
                                                         onClick={() => removeEditQuestion(qIdx)}
                                                         className="text-red-400 hover:text-red-300 text-xs"
                                                     >
-                                                        Remove
+                                                        Supprimer
                                                     </button>
                                                 </div>
                                                 <div className="space-y-1 pl-2 border-l-2 border-slate-700">
@@ -683,7 +683,7 @@ const TeamDetails = () => {
                                                                 value={level.description}
                                                                 onChange={(e) => handleEditLevelChange(qIdx, lIdx, e.target.value)}
                                                                 className="flex-1 text-xs bg-slate-900 border border-slate-700 rounded px-2 py-1 text-slate-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
-                                                                placeholder={`Level ${level.value} description`}
+                                                                placeholder={`Description du niveau ${level.value}`}
                                                                 required
                                                             />
                                                         </div>
@@ -698,7 +698,7 @@ const TeamDetails = () => {
                                     type="submit"
                                     className="w-full rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
                                 >
-                                    Save Changes
+                                    Enregistrer les modifications
                                 </button>
                             </form>
                         )}
@@ -708,10 +708,10 @@ const TeamDetails = () => {
                 <div className="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700 h-fit">
                     {canStartAssessments ? (
                         <>
-                            <h2 className="text-xl font-semibold mb-4 text-indigo-400">Start New Assessment</h2>
+                            <h2 className="text-xl font-semibold mb-4 text-indigo-400">Démarrer une nouvelle évaluation</h2>
                             <form onSubmit={handleStartAssessment} className="space-y-4">
                                 <div>
-                                    <label htmlFor="model" className="block text-sm font-medium text-slate-300">Maturity Model</label>
+                                    <label htmlFor="model" className="block text-sm font-medium text-slate-300">Modèle de maturité</label>
                                     <select
                                         id="model"
                                         value={selectedModelId}
@@ -727,11 +727,11 @@ const TeamDetails = () => {
                                     type="submit"
                                     className="w-full rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
                                 >
-                                    Start Assessment
+                                    Démarrer l'évaluation
                                 </button>
                             </form>
                             {assessmentMessage && (
-                                <div className={`mt-4 p-2 rounded text-sm ${assessmentMessage.includes("success") ? "bg-green-900/50 text-green-400" : "bg-red-900/50 text-red-400"}`}>
+                                <div className={`mt-4 p-2 rounded text-sm ${assessmentMessage.toLowerCase().includes("succès") || assessmentMessage.toLowerCase().includes("réussi") ? "bg-green-900/50 text-green-400" : "bg-red-900/50 text-red-400"}`}>
                                     {assessmentMessage}
                                 </div>
                             )}
@@ -742,8 +742,8 @@ const TeamDetails = () => {
                             )}
                         </>
                     ) : (
-                         <div className="text-slate-400 text-sm">
-                            Only the team owner, a team leader, or a PMO can start new assessments.
+                                 <div className="text-slate-400 text-sm">
+                                     Seul le propriétaire de l'équipe, un chef d'équipe ou un PMO peut lancer de nouvelles évaluations.
                          </div>
                     )}
                 </div>
