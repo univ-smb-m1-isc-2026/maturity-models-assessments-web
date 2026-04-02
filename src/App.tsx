@@ -14,7 +14,11 @@ import Verify from './components/Verify'
 import TeamInvitations from './components/TeamInvitations'
 import InvitationAccept from './components/InvitationAccept'
 
-function Home() {
+interface HomeProps {
+  currentUser?: IUser;
+}
+
+function Home({ currentUser }: HomeProps) {
   return (
     <main className="relative overflow-hidden bg-slate-950">
       <div className="absolute inset-0 -z-10">
@@ -39,20 +43,22 @@ function Home() {
               Conçu pour présenter des résultats compréhensibles sans jargon technique.
             </p>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <a
-                href="/register"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-cyan-400 px-6 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-cyan-500/20 transition hover:bg-cyan-300"
-              >
-                Créer un compte
-              </a>
-              <a
-                href="/login"
-                className="inline-flex items-center justify-center rounded-full border border-slate-700 bg-slate-900/70 px-6 py-3 text-sm font-semibold text-slate-100 transition hover:border-slate-600 hover:bg-slate-800"
-              >
-                Se connecter
-              </a>
-            </div>
+            {!currentUser && (
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <a
+                  href="/register"
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-cyan-400 px-6 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-cyan-500/20 transition hover:bg-cyan-300"
+                >
+                  Créer un compte
+                </a>
+                <a
+                  href="/login"
+                  className="inline-flex items-center justify-center rounded-full border border-slate-700 bg-slate-900/70 px-6 py-3 text-sm font-semibold text-slate-100 transition hover:border-slate-600 hover:bg-slate-800"
+                >
+                  Se connecter
+                </a>
+              </div>
+            )}
 
             <dl className="mt-10 grid gap-4 sm:grid-cols-3">
               <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 backdrop-blur">
@@ -288,7 +294,7 @@ function App() {
       </nav>
 
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home currentUser={currentUser} />} />
         <Route path="/login" element={<Login />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/admin/models" element={<MaturityModelsAdmin />} />
