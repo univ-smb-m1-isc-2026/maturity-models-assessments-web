@@ -285,16 +285,19 @@ const TeamDetails = () => {
     }
 
     const currentUserId = currentUser?.id;
+    const profileRoles: string[] = currentUser?.roles ?? [];
+    const hasManagementProfile = profileRoles.includes("ROLE_PMO") || profileRoles.includes("ROLE_TEAM_LEADER");
+    const isProfileMemberOnly = profileRoles.includes("ROLE_TEAM_MEMBER") && !hasManagementProfile;
     const currentMember = team.members.find((m) => m.id === currentUserId);
-    const currentTeamRoles = currentMember?.roles ?? [];
+    const currentTeamRoles = currentMember?.teamRoles ?? currentMember?.roles ?? [];
 
     const isOwner = currentUserId === team.owner.id;
     const isPMO = currentTeamRoles.includes("ROLE_PMO");
     const isTeamLeader = currentTeamRoles.includes("ROLE_TEAM_LEADER");
-    const canInviteMembers = isOwner || isPMO || isTeamLeader;
-    const canStartAssessments = isOwner || isPMO || isTeamLeader;
-    const canManageModels = isOwner || isPMO;
-    const canEditRoles = isOwner || isPMO;
+    const canInviteMembers = !isProfileMemberOnly && (isOwner || isPMO || isTeamLeader);
+    const canStartAssessments = !isProfileMemberOnly && (isOwner || isPMO || isTeamLeader);
+    const canManageModels = !isProfileMemberOnly && (isOwner || isPMO);
+    const canEditRoles = !isProfileMemberOnly && (isOwner || isPMO);
 
     return (
         <div className="min-h-full py-10 px-4 sm:px-6 lg:px-8 text-white">
@@ -312,6 +315,12 @@ const TeamDetails = () => {
                         : (team.owner.email || "Unknown")}
                 </span></p>
             </header>
+
+            {isProfileMemberOnly && (
+                <div className="mb-6 rounded-md border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
+                    Your profile is Team Member. You can view team information, but management actions are disabled.
+                </div>
+            )}
 
             <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
                 <div className="md:col-span-2 bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
@@ -331,7 +340,7 @@ const TeamDetails = () => {
                                         </p>
                                         <p className="text-xs text-slate-400">{member.email}</p>
                                     <div className="flex gap-1 mt-1">
-                                        {member.roles && member.roles.map(role => (
+                                        {(member.roles && member.roles.length > 0 ? member.roles : ["ROLE_TEAM_MEMBER"]).map(role => (
                                             <span key={role} className="text-[10px] px-1.5 py-0.5 rounded bg-slate-700 text-slate-300">
                                                 {role.replace('ROLE_', '').replace('_', ' ')}
                                             </span>
@@ -378,9 +387,10 @@ const TeamDetails = () => {
                                             setEditingMember(member.id || null);
                                             
                                             const currentRoles: string[] = [];
-                                            if (member.roles?.includes("ROLE_PMO")) currentRoles.push("pmo");
-                                            if (member.roles?.includes("ROLE_TEAM_LEADER")) currentRoles.push("leader");
-                                            if (member.roles?.includes("ROLE_TEAM_MEMBER")) currentRoles.push("user");
+                                            const memberTeamRoles = member.teamRoles ?? member.roles ?? [];
+                                            if (memberTeamRoles.includes("ROLE_PMO")) currentRoles.push("pmo");
+                                            if (memberTeamRoles.includes("ROLE_TEAM_LEADER")) currentRoles.push("leader");
+                                            if (memberTeamRoles.includes("ROLE_TEAM_MEMBER")) currentRoles.push("user");
                                             setSelectedRoles(currentRoles);
                                         }}
                                         className="text-xs text-indigo-400 hover:text-indigo-300"

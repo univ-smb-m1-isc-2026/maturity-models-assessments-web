@@ -4,12 +4,13 @@ import authHeader from "./auth-header.ts";
 
 import { apiUrl } from "../config";
 
-const register = (firstName: string, lastName: string, email: string, password: string, teamId?: string) => {
+const register = (firstName: string, lastName: string, email: string, password: string, roles?: string[], teamId?: string) => {
   return axios.post(apiUrl("/api/auth/signup"), {
     firstName,
     lastName,
     email,
     password,
+    roles,
     teamId
   });
 };

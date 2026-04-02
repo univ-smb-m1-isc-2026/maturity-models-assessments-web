@@ -70,6 +70,18 @@ const Profile = () => {
                 <dt className="text-sm font-medium text-slate-400">Email</dt>
                 <dd className="mt-1 text-sm text-white sm:mt-0 sm:col-span-2">{currentUser.email}</dd>
               </div>
+              <div className="bg-slate-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt className="text-sm font-medium text-slate-400">Profile Role</dt>
+                <dd className="mt-1 text-sm text-white sm:mt-0 sm:col-span-2">
+                  <div className="flex flex-wrap gap-2">
+                    {(currentUser.roles?.length ? currentUser.roles : ["ROLE_TEAM_MEMBER"]).map((role) => (
+                      <span key={role} className="inline-flex items-center rounded-md bg-indigo-500/10 px-2 py-1 text-xs font-medium text-indigo-300 ring-1 ring-inset ring-indigo-500/20">
+                        {role.replace("ROLE_", "").replace("_", " ")}
+                      </span>
+                    ))}
+                  </div>
+                </dd>
+              </div>
               <div className="bg-slate-900 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                 <dt className="text-sm font-medium text-slate-400">Two-Factor Authentication</dt>
                 <dd className="mt-1 text-sm text-white sm:mt-0 sm:col-span-2">

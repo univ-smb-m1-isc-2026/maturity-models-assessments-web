@@ -2,6 +2,12 @@ import { useState, FormEvent } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import AuthService from "../services/auth.service";
 
+const ROLE_OPTIONS = [
+  { value: "ROLE_PMO", label: "PMO" },
+  { value: "ROLE_TEAM_LEADER", label: "Team Leader" },
+  { value: "ROLE_TEAM_MEMBER", label: "Team Member" },
+];
+
 const Register = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -11,6 +17,7 @@ const Register = () => {
   const teamIdParam = searchParams.get("teamId") || "";
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [selectedRole, setSelectedRole] = useState("ROLE_TEAM_MEMBER");
   const [successful, setSuccessful] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -26,7 +33,9 @@ const Register = () => {
       return;
     }
 
-    AuthService.register(firstName, lastName, email, password, teamIdParam || undefined).then(
+    const roles = teamIdParam ? undefined : [selectedRole];
+
+    AuthService.register(firstName, lastName, email, password, roles, teamIdParam || undefined).then(
       (response) => {
         setMessage(response.data.message);
         setSuccessful(true);
@@ -146,6 +155,39 @@ const Register = () => {
                   />
                 </div>
               </div>
+
+              {!teamIdParam && (
+                <fieldset>
+                  <legend className="block text-sm font-medium leading-6 text-white">Select your role</legend>
+                  <p className="mt-1 text-xs text-slate-400">
+                    This role is used for your personal profile. Team roles can still be adjusted later by a team owner.
+                  </p>
+                  <div className="mt-3 space-y-3">
+                    {ROLE_OPTIONS.map((role) => (
+                      <label
+                        key={role.value}
+                        className="flex items-center gap-3 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm text-white cursor-pointer"
+                      >
+                        <input
+                          type="radio"
+                          name="role"
+                          value={role.value}
+                          checked={selectedRole === role.value}
+                          onChange={() => setSelectedRole(role.value)}
+                          className="h-4 w-4 border-slate-600 text-indigo-500 focus:ring-indigo-500"
+                        />
+                        <span>{role.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
+              )}
+
+              {teamIdParam && (
+                <div className="rounded-md border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
+                  You are registering through an invitation. Your team role will be set by the invitation flow.
+                </div>
+              )}
 
               <div>
                 <button
