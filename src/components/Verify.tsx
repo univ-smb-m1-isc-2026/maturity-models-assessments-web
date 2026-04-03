@@ -18,7 +18,9 @@ const Verify = () => {
     setSuccessful(false);
     setMessageType("error");
 
-    AuthService.verify(email, code).then(
+    const normalizedEmail = email.trim().toLowerCase();
+
+    AuthService.verify(normalizedEmail, code).then(
       (response) => {
         setMessage(response.data.message);
         setSuccessful(true);
@@ -47,7 +49,9 @@ const Verify = () => {
     setMessage("");
     setMessageType("info");
 
-    AuthService.resendVerification(email).then(
+    const normalizedEmail = email.trim().toLowerCase();
+
+    AuthService.resendVerification(normalizedEmail).then(
       (response) => {
         setMessage(response.data.message);
         setResending(false);

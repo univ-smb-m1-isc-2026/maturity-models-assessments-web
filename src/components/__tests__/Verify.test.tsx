@@ -66,6 +66,26 @@ describe('Verify Component', () => {
     });
   });
 
+  it('normalizes email case before verification', async () => {
+    const user = userEvent.setup();
+    (AuthService.verify as any).mockResolvedValue({ data: { message: 'Verification successful' } });
+
+    render(
+      <MemoryRouter>
+        <Verify />
+      </MemoryRouter>
+    );
+
+    await user.type(screen.getByLabelText(/Email/i), 'TEST@EXAMPLE.COM');
+    await user.type(screen.getByLabelText(/Verification Code/i), '123456');
+
+    await user.click(screen.getByRole('button', { name: /Verify Account/i }));
+
+    await waitFor(() => {
+      expect(AuthService.verify).toHaveBeenCalledWith('test@example.com', '123456');
+    });
+  });
+
   it('handles verification error', async () => {
     const user = userEvent.setup();
     const errorResponse = {

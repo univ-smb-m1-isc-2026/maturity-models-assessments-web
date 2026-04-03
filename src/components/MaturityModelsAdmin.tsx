@@ -22,23 +22,30 @@ const MaturityModelsAdmin = () => {
     const currentUser = AuthService.getCurrentUser();
 
     const loadManageableTeams = useCallback(() => {
-        TeamService.getUserTeams().then(
+        TeamService.getAllTeams().then(
             (response) => {
                 const teams: ITeam[] = response.data || [];
-                const filtered = teams.filter((team) => {
-                    const isOwner = team.owner?.id === currentUser?.id;
-                    const myMembership = team.members?.find((m) => m.id === currentUser?.id);
-                    const isPMO = myMembership?.roles?.includes("ROLE_PMO") ?? false;
-                    return isOwner || isPMO;
-                });
-
-                setManageableTeams(filtered);
+                setManageableTeams(teams);
+                if (!selectedTeamId && teams.length > 0) {
+                    setSelectedTeamId(teams[0].id);
+                }
             },
             () => {
-                setManageableTeams([]);
+                TeamService.getUserTeams().then(
+                    (response) => {
+                        const teams: ITeam[] = response.data || [];
+                        setManageableTeams(teams);
+                        if (!selectedTeamId && teams.length > 0) {
+                            setSelectedTeamId(teams[0].id);
+                        }
+                    },
+                    () => {
+                        setManageableTeams([]);
+                    }
+                );
             }
         );
-    }, [currentUser?.id]);
+    }, [selectedTeamId]);
 
     const loadModels = useCallback(() => {
         MaturityModelService.getAllModels().then(

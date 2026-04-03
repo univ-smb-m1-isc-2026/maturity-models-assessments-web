@@ -42,14 +42,16 @@ const getCurrentUser = () => {
 };
 
 const verify = (email: string, code: string) => {
+  const normalizedEmail = email.trim().toLowerCase();
   return axios.post(apiUrl("/api/auth/verify"), {
-    email,
+    email: normalizedEmail,
     code
   });
 };
 
 const resendVerification = (email: string) => {
-  return axios.post(apiUrl("/api/auth/verify/resend"), null, { params: { email } });
+  const normalizedEmail = email.trim().toLowerCase();
+  return axios.post(apiUrl("/api/auth/verify/resend"), null, { params: { email: normalizedEmail } });
 };
 
 const generate2FA = () => {

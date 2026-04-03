@@ -7,6 +7,10 @@ const getUserTeams = () => {
   return axios.get(apiUrl("/api/teams"), { headers: authHeader() });
 };
 
+const getAllTeams = () => {
+  return axios.get(apiUrl("/api/teams/all"), { headers: authHeader() });
+};
+
 const createTeam = (name: string) => {
   return axios.post(apiUrl("/api/teams"), { name }, { headers: authHeader() });
 };
@@ -37,6 +41,7 @@ const revokeInvitation = (teamId: string, invitationId: string) => {
 
 const TeamService = {
   getUserTeams,
+  getAllTeams,
   createTeam,
   inviteMember,
   updateMemberRoles,
