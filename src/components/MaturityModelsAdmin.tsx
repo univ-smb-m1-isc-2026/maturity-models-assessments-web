@@ -33,15 +33,12 @@ const MaturityModelsAdmin = () => {
                 });
 
                 setManageableTeams(filtered);
-                if (!selectedTeamId && filtered.length > 0) {
-                    setSelectedTeamId(filtered[0].id);
-                }
             },
             () => {
                 setManageableTeams([]);
             }
         );
-    }, [currentUser?.id, selectedTeamId]);
+    }, [currentUser?.id]);
 
     const loadModels = useCallback(() => {
         MaturityModelService.getAllModels().then(
@@ -75,7 +72,7 @@ const MaturityModelsAdmin = () => {
 
     const handleEditModel = (model: IMaturityModel) => {
         setCurrentModel(model);
-        setSelectedTeamId(model.teamId || selectedTeamId);
+        setSelectedTeamId(model.teamId || "");
         setView("form");
         setMessage("");
     };
@@ -99,11 +96,6 @@ const MaturityModelsAdmin = () => {
         e.preventDefault();
         setMessage("");
 
-        if (!selectedTeamId) {
-            setMessage("Please select a team.");
-            return;
-        }
-
         if (currentModel.questions.length === 0) {
             setMessage("Please add at least one question.");
             return;
@@ -120,7 +112,7 @@ const MaturityModelsAdmin = () => {
 
         const payload: IMaturityModel = {
             ...currentModel,
-            teamId: currentModel.teamId || selectedTeamId,
+            teamId: currentModel.teamId || selectedTeamId || undefined,
             questions: sanitizedQuestions
         };
 
@@ -283,7 +275,7 @@ const MaturityModelsAdmin = () => {
                     </div>
 
                     <div>
-                        <label htmlFor="teamId" className="block text-sm font-medium text-slate-300">Team</label>
+                        <label htmlFor="teamId" className="block text-sm font-medium text-slate-300">Team (optionnel)</label>
                         <select
                             id="teamId"
                             value={selectedTeamId}
@@ -292,10 +284,9 @@ const MaturityModelsAdmin = () => {
                                 setCurrentModel({ ...currentModel, teamId: e.target.value });
                             }}
                             className="mt-1 block w-full rounded-md border-0 bg-slate-900 py-1.5 text-white shadow-sm ring-1 ring-inset ring-slate-600 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6 px-3"
-                            required
                             disabled={!!currentModel.id}
                         >
-                            <option value="" disabled>Select a team</option>
+                            <option value="">Aucune team (modèle global)</option>
                             {manageableTeams.map((team) => (
                                 <option key={team.id} value={team.id}>{team.name}</option>
                             ))}

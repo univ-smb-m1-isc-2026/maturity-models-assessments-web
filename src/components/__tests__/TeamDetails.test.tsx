@@ -87,40 +87,4 @@ describe('TeamDetails Component', () => {
     });
   });
 
-  it('handles role updates', async () => {
-    const user = userEvent.setup();
-    (TeamService.getUserTeams as any).mockResolvedValue({ data: [mockTeam] });
-    (AssessmentService.getTeamAssessments as any).mockResolvedValue({ data: [] });
-    (MaturityModelService.getAllModels as any).mockResolvedValue({ data: [] });
-    (MaturityModelService.getModelsByTeam as any).mockResolvedValue({ data: [] });
-    (TeamService.updateMemberRoles as any).mockResolvedValue({ data: { message: 'Roles updated' } });
-
-    render(
-      <MemoryRouter initialEntries={['/teams/1']}>
-        <Routes>
-            <Route path="/teams/:id" element={<TeamDetails />} />
-        </Routes>
-      </MemoryRouter>
-    );
-
-    await waitFor(() => expect(screen.getByText('Team Alpha')).toBeInTheDocument());
-
-    const editButtons = screen.getAllByText('Edit Roles');
-    await user.click(editButtons[0]);
-    
-    const memberItem = screen.getByText('Member One').closest('li');
-    expect(memberItem).toBeInTheDocument();
-    
-    await user.click(editButtons[1]); 
-
-    const pmoCheckbox = screen.getByLabelText('PMO');
-    await user.click(pmoCheckbox);
-
-    await user.click(screen.getByRole('button', { name: 'Save' }));
-
-    await waitFor(() => {
-        expect(TeamService.updateMemberRoles).toHaveBeenCalledWith('1', 'user2', ['pmo']);
-        expect(screen.getByText('Roles updated')).toBeInTheDocument();
-    });
-  });
 });

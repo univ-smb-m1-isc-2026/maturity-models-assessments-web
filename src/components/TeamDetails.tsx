@@ -21,8 +21,6 @@ const TeamDetails = () => {
     const [assessmentMessage, setAssessmentMessage] = useState("");
     const [loading, setLoading] = useState(true);
     const [currentUser] = useState<IUser | undefined>(AuthService.getCurrentUser());
-    const [editingMember, setEditingMember] = useState<string | null>(null);
-    const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
     
     
     const [isCreatingModel, setIsCreatingModel] = useState(false);
@@ -142,33 +140,6 @@ const TeamDetails = () => {
         }
     };
 
-    const handleUpdateRoles = (memberId: string) => {
-        if (!id || !memberId) return;
-
-        if (selectedRoles.length === 0) {
-            setMessage("Please select at least one role.");
-            return;
-        }
-
-        TeamService.updateMemberRoles(id, memberId, selectedRoles).then(
-            (response) => {
-                setMessage(response.data.message);
-                setEditingMember(null);
-                setSelectedRoles([]);
-                loadTeam();
-            },
-            (error) => {
-                const resMessage =
-                    (error.response &&
-                        error.response.data &&
-                        error.response.data.message) ||
-                    error.message ||
-                    error.toString();
-                setMessage(resMessage);
-            }
-        );
-    };
-
     const handleCreateModel = (e: FormEvent) => {
         e.preventDefault();
         setCreateModelMessage("");
@@ -283,14 +254,6 @@ const TeamDetails = () => {
         setEditingModel({ ...editingModel, questions: updated });
     };
 
-    const toggleRole = (role: string) => {
-        if (selectedRoles.includes(role)) {
-            setSelectedRoles(selectedRoles.filter(r => r !== role));
-        } else {
-            setSelectedRoles([...selectedRoles, role]);
-        }
-    };
-
     if (loading) {
         return <div className="text-white text-center mt-10">Chargement des détails de l'équipe...</div>;
     }
@@ -313,7 +276,6 @@ const TeamDetails = () => {
     const canInviteMembers = !isProfileMemberOnly && (isOwner || isPMO || isTeamLeader);
     const canStartAssessments = !isProfileMemberOnly && (isOwner || isPMO || isTeamLeader);
     const canManageModels = isProfilePMO;
-    const canEditRoles = isPMO;
 
     return (
         <div className="min-h-full py-10 px-4 sm:px-6 lg:px-8 text-white">
@@ -362,58 +324,9 @@ const TeamDetails = () => {
                                             </span>
                                         ))}
                                     </div>
-                                    {editingMember === member.id && (
-                                        <div className="mt-2 p-2 bg-slate-900 rounded border border-slate-700">
-                                            <p className="text-xs text-slate-400 mb-2">Sélectionnez les rôles :</p>
-                                            <div className="flex flex-wrap gap-2 mb-2">
-                                                {['pmo', 'leader', 'user'].map(role => (
-                                                    <label key={role} className="flex items-center space-x-1 text-xs text-slate-300 cursor-pointer">
-                                                        <input 
-                                                            type="checkbox" 
-                                                            checked={selectedRoles.includes(role)} 
-                                                            onChange={() => toggleRole(role)}
-                                                            className="rounded border-slate-600 bg-slate-800 text-indigo-600 focus:ring-indigo-500"
-                                                        />
-                                                        <span>{role === 'user' ? 'Membre' : role === 'leader' ? "Chef d'équipe" : 'PMO'}</span>
-                                                    </label>
-                                                ))}
-                                            </div>
-                                            <div className="flex flex-wrap gap-2">
-                                                <button 
-                                                    onClick={() => member.id && handleUpdateRoles(member.id)}
-                                                    className="px-2 py-1 text-xs bg-green-600 text-white rounded hover:bg-green-500"
-                                                >
-                                                    Enregistrer
-                                                </button>
-                                                <button 
-                                                    onClick={() => setEditingMember(null)}
-                                                    className="px-2 py-1 text-xs bg-slate-600 text-white rounded hover:bg-slate-500"
-                                                >
-                                                    Annuler
-                                                </button>
-                                            </div>
-                                        </div>
-                                    )}
                                 </div>
                             </div>
                             <div className="flex flex-row flex-wrap items-center gap-3 sm:flex-col sm:items-end sm:gap-2">
-                                {canEditRoles && (
-                                    <button 
-                                        onClick={() => {
-                                            setEditingMember(member.id || null);
-                                            
-                                            const currentRoles: string[] = [];
-                                            const memberTeamRoles = member.teamRoles ?? member.roles ?? [];
-                                            if (memberTeamRoles.includes("ROLE_PMO")) currentRoles.push("pmo");
-                                            if (memberTeamRoles.includes("ROLE_TEAM_LEADER")) currentRoles.push("leader");
-                                            if (memberTeamRoles.includes("ROLE_TEAM_MEMBER")) currentRoles.push("user");
-                                            setSelectedRoles(currentRoles);
-                                        }}
-                                        className="text-xs text-indigo-400 hover:text-indigo-300"
-                                    >
-                                        Modifier les rôles
-                                    </button>
-                                )}
                                 {member.id === team.owner.id && (
                                     <span className="inline-flex items-center rounded-md bg-yellow-400/10 px-2 py-1 text-xs font-medium text-yellow-500 ring-1 ring-inset ring-yellow-400/20">
                                         Propriétaire
