@@ -2,7 +2,6 @@ import { useState, useEffect, FormEvent, useCallback } from "react";
 import MaturityModelService from "../services/maturity-model.service";
 import { IMaturityModel, IQuestion } from "../types/maturity-model.type";
 import TeamService from "../services/team.service";
-import AuthService from "../services/auth.service";
 import { ITeam } from "../types/team.type";
 
 const MaturityModelsAdmin = () => {
@@ -18,8 +17,6 @@ const MaturityModelsAdmin = () => {
         teamId: "",
         questions: []
     });
-
-    const currentUser = AuthService.getCurrentUser();
 
     const loadManageableTeams = useCallback(() => {
         TeamService.getAllTeams().then(
